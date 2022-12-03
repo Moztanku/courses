@@ -1,7 +1,13 @@
 #!/bin/bash
 
-function appendString(){
-    echo "123";
+function writeDataToFile(){
+    data=$1
+    file=$2
+
+    content=$(cat $file)
+    content=${content#*,},${1}
+    echo $content > $file
+    echo $content
 }
 
 utemp=$(mktemp);
@@ -19,17 +25,17 @@ trap cleanup EXIT;
 while :
 do
     {
-        rbStart=`awk 'BEGIN {sum=0} /:/ {sum=sum=$2} END {print sum}' /proc/net/dev`;   #Bytes received at start of the loop
-        sbStart=`awk 'BEGIN {sum=0} /:/ {sum=sum=$10} END {print sum}' /proc/net/dev`;   #sent
+        rbStart=`awk 'BEGIN {sum=0} /:/ {sum=sum+$2} END {print sum}' /proc/net/dev`;   #Bytes received at start of the loop
+        sbStart=`awk 'BEGIN {sum=0} /:/ {sum=sum+$10} END {print sum}' /proc/net/dev`;   #sent
 
         cpuStart=`awk '/cpu[0-9]+/ {print($0)}' /proc/stat`;
 
-        sleep 0.8;
+        sleep 0.7;
         tput clear;
         #tput cup 0,0;  #Altarnative to clear that puts cursor to position 0,0
 
-        rbEnd=`awk 'BEGIN {sum=0} /:/ {sum=sum=$2} END {print sum}' /proc/net/dev`;     #Bytes received at end of the loop
-        sbEnd=`awk 'BEGIN {sum=0} /:/ {sum=sum=$10} END {print sum}' /proc/net/dev`;     #sent
+        rbEnd=`awk 'BEGIN {sum=0} /:/ {sum=sum+$2} END {print sum}' /proc/net/dev`;     #Bytes received at end of the loop
+        sbEnd=`awk 'BEGIN {sum=0} /:/ {sum=sum+$10} END {print sum}' /proc/net/dev`;     #sent
 
         battery=`grep POWER_SUPPLY_CAPACITY= < /sys/class/power_supply/BAT0/uevent | cut -d "=" -f 2`;
         printf "Battery ${battery} 50" | awk -f "./progress_bar-1.awk";   # Prints battery
@@ -54,10 +60,15 @@ do
         echo "$(awk 'BEGIN{ORS=" "}/MemTotal*|MemFree*|MemAvailable*/ {print $2}' < /proc/meminfo)50" | awk -f "./progress_bar-2.awk";  # Printing memory info
 
         printf "\n\n";
-        bytesReceived=$(numfmt --to iec --format "%8.0f" $(( rbEnd - rbStart )));    #Bytes received in a second
-        bytesSent=$(numfmt --to iec --format "%8.0f" $(( sbEnd - sbStart )));    #sent
-        appendString $uploadRecords $bytesSent
-        printf "${uploadRecords}\n"
+        #bytesReceived=$(numfmt --to iec --format "%8.0f" $(( rbEnd - rbStart )));    #Bytes received in a second
+        #bytesSent=$(numfmt --to iec --format "%8.0f" $(( sbEnd - sbStart )));    #sent
+        bytesReceived=$(( rbEnd - rbStart ))
+        bytesSent=$(( sbEnd - sbStart ))
+        printf "Download speed:\n"
+        echo $(writeDataToFile $bytesReceived $dtemp) | awk -F "," -f "./graph.awk";
+        printf "\nUpload speed:\n"
+        echo $(writeDataToFile $bytesSent $utemp) | awk -F "," -f "./graph.awk";
+        #$(writeDataToFile $bytesSent $utemp)
         # {
         #     printf "Bytes sent:,${bytesSent}B\n"
         #     printf "${uploadRecords}\n"
