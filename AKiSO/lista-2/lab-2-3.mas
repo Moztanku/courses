@@ -1,0 +1,107 @@
+Clear
+Store Result
+Store XNeg
+Store YNeg
+
+Input
+Store X
+Skipcond 000
+Jump XNotNeg
+
+Subt X
+Subt X
+Store X
+Load XNeg
+Add one
+Store XNeg
+
+XNotNeg,Input
+		Skipcond 400
+		jump YNotZero
+		Halt
+
+YNotZero,Store Y
+		Skipcond 000
+		Jump loop
+
+		Subt Y
+		Subt Y
+		Store Y
+		Load YNeg
+		Add one
+		Store YNeg
+		jump loop
+
+loop,Load Result
+	Add one
+    Store Result
+	Load X
+    Subt Y
+	Store X
+	Skipcond 000
+	Jump  loop
+
+    Load Result
+	Subt one
+    Store Result
+    Load Y
+    Add X
+    Store Reminder
+    Load XNeg
+	Skipcond 400
+    jump XNegative
+
+    Load YNeg
+	Skipcond 400
+    jump YNegative
+
+End,Load Result
+   Output
+   Load Reminder
+   Output
+   Halt
+
+XNegative,Load YNeg
+		Skipcond 400
+    	jump BothNegative
+    	Load Reminder
+    	Skipcond 800
+    	jump YNegative
+
+    	Load Y
+    	Subt Reminder
+		Store Reminder
+		Load Result
+		Subt Result
+		Subt Result
+		Subt one
+    	Store Result
+		Jump End
+
+YNegative,Load Result
+		Subt Result
+		Subt Result
+    	Store Result
+		Jump End
+BothNegative,Load Reminder
+    		Skipcond 800
+    		jump End
+			Load Y
+    		Subt Reminder
+			Store Reminder
+    		Load Result
+			Add one
+			Store Result
+    		Jump End
+
+X, DEC 0
+XNeg, DEC 0
+Y, DEC 0
+YNeg, DEC 0
+Nonneg, DEC 0
+Result, DEC 0
+Reminder, DEC 0
+Remainder, DEC 0
+
+one, DEC 1
+two, DEC 2

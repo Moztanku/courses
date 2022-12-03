@@ -1,0 +1,87 @@
+LOAD  		number
+JNS   		tohex
+JNS			output
+HALT
+                    
+number,             DEC         123
+tohex,              HEX 0
+loop,				LOAD result
+					Add one
+                    Store result
+                    Load number
+                    Subt sixteen
+					Store number
+                    Skipcond 000
+                    Jump loop
+                    Jump endloop
+endloop,	Load number
+			add sixteen
+			JnS addLetter
+			Load result
+			Subt one
+            Store number
+            Clear
+			Store result
+            Load number
+            Subt sixteen
+            Skipcond 0
+            jump loop
+            Load number
+			JnS addLetter
+JumpI tohex
+
+addLetter,	HEX 0
+	Store remainder
+	Load string
+    Add one
+    Store string
+    Load ptr
+    Add remainder
+    Add one
+    Store helpptr
+	LoadI helpptr
+	StoreI string
+	JumpI addLetter
+    
+output,	HEX 0
+	Load s4
+    Skipcond 400
+    Output
+	Load s3
+    Skipcond 400
+    Output
+	Load s2
+    Skipcond 400
+    Output
+	Load s1
+    Skipcond 400
+    Output
+JumpI output
+
+result, DEC 0
+remainder, DEC 0
+helpptr, HEX 0
+ptr,	HEX 3B
+		HEX 30
+	 	HEX 31
+		HEX 32
+		HEX 33
+		HEX 34
+		HEX 35
+		HEX 36
+		HEX 37
+		HEX 38
+		HEX 39
+		HEX 41
+		HEX 42
+		HEX 43
+		HEX 44
+		HEX 45
+		HEX 46
+one, 	DEC 1
+sixteen, DEC 16
+string,	HEX 4E
+s1,		HEX 0
+s2,		HEX 0
+s3,     HEX 0
+s4,     HEX 0

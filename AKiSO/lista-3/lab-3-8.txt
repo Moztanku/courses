@@ -1,0 +1,16 @@
+$ sleep 1000 &
+[1] 4096
+$ ls -l /proc/4096/fd
+lrwx------ 1 user users 64 10-30 12:32 0 -> /dev/pts/4
+lrwx------ 1 user users 64 10-30 12:32 1 -> /dev/pts/4
+lrwx------ 1 user users 64 10-30 12:32 2 -> /dev/pts/4
+$ gdp -p 4096 /bin/sleep        <-  Podłączenie gdp (gnu debugger) do procesu
+(gdp) p close(1)                <-  Zamknięcie strumienia wyjścia dla handle 1 (wyjście standardowe)
+$1 = 0
+(gdp) p creat("/tmp/foo", 0600) <-  Otwarcie pliku /tmp/foo i ustawienie go jako handle dla 1
+$2 = 1
+(gdp) q
+$ ls -l /proc/4096/fd
+lrwx------ 1 user users 64 10-30 12:32 0 -> /dev/pts/4
+lrwx------ 1 user users 64 10-30 12:32 1 -> /tmp/foo
+lrwx------ 1 user users 64 10-30 12:32 2 -> /dev/pts/4
