@@ -1,17 +1,17 @@
 # courses
-Programs written for my university courses
+Programs I've written for university courses
 
 ## Ist semester
-####TODO
+#### TODO
 
 ## IInd semester
-####TODO
+#### TODO
 
 ## IIIrd semester
-####TP - Technologie Programowania
-####AKiSO - Architektura Komputerów i Systemów Operacyjnych
-####BDiSI - Bazy Danych i Systemy Informacyjne
-####MPiS - Metody Probabilistyczne i Statystyka
+#### TP - Technologie Programowania
+#### AKiSO - Architektura Komputerów i Systemów Operacyjnych
+#### BDiSI - Bazy Danych i Systemy Informacyjne
+#### MPiS - Metody Probabilistyczne i Statystyka
 
 ## IVth semester
 #### Coming soon
