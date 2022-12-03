@@ -32,7 +32,7 @@ do
         sbEnd=`awk 'BEGIN {sum=0} /:/ {sum=sum=$10} END {print sum}' /proc/net/dev`;     #sent
 
         battery=`grep POWER_SUPPLY_CAPACITY= < /sys/class/power_supply/BAT0/uevent | cut -d "=" -f 2`;
-        printf "Battery ${battery} 50" | awk -f "/home/most/Dokumenty/bash/akiso-4-2/script-1.awk";   # Prints battery
+        printf "Battery ${battery} 50" | awk -f "./progress_bar-1.awk";   # Prints battery
         printf "\n\n"
 
         cpuEnd=`awk '/cpu[0-9]+/ {print($0)}' /proc/stat`;
@@ -44,14 +44,14 @@ do
             end=(${cpuEndArr[i]});
             usage=$(( 100 - (end[4]-start[4])*100/(end[1]-start[1]+end[2]-start[2]+end[3]-start[3]+end[4]-start[4]+end[5]-start[5]+end[6]-start[6]+end[7]-start[7]+end[8]-start[8]+end[9]-start[9]) ));
             mhz=$(( `cat /sys/devices/system/cpu/cpu$i/cpufreq/scaling_cur_freq` / 1000000))
-            printf "${start[0]} $usage 20" | awk -f "/home/most/Dokumenty/bash/akiso-4-2/script-1.awk";   # Printing cpu info in rows of 2
+            printf "${start[0]} $usage 20" | awk -f "./progress_bar-1.awk";   # Printing cpu info in rows of 2
             if [ $((i%2)) -eq 1 ]; then
                 printf "\n";
             fi;
         done | column -t;   # if makes it split cores into 2 columns
 
         printf "\n";
-        echo "$(awk 'BEGIN{ORS=" "}/MemTotal*|MemFree*|MemAvailable*/ {print $2}' < /proc/meminfo)50" | awk -f "/home/most/Dokumenty/bash/akiso-4-2/script-2.awk";  # Printing memory info
+        echo "$(awk 'BEGIN{ORS=" "}/MemTotal*|MemFree*|MemAvailable*/ {print $2}' < /proc/meminfo)50" | awk -f "./progress_bar-2.awk";  # Printing memory info
 
         printf "\n\n";
         bytesReceived=$(numfmt --to iec --format "%8.0f" $(( rbEnd - rbStart )));    #Bytes received in a second
