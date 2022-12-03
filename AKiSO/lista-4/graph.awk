@@ -21,13 +21,12 @@ BEGIN{
             number/=1000;
             if(number > 1000){
                 number/=1000;
-                print RESET number " MB\n"; 
+                print RESET " " number " MB\n"; 
             }else{
-                print RESET number " kB\n"; 
+                print RESET " " number " kB\n"; 
             }
         }else{
-            print RESET number " B\n"; 
+            print RESET " " number " B\n"; 
         }
     }
-    print RESET;
 }
