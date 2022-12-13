@@ -94,7 +94,51 @@ DELIMITER ;
 INSERT INTO firma.Zawody (nazwa, pensja_min, pensja_max)
 VALUES ('polityk', 3000, 25000),
        ('nauczyciel', 2500, 4000),
-       ('lekarz', 5000, 12000),
-       ('informatyk', 7000, 30000);
+       ('informatyk', 7000, 30000),
+       ('lekarz', 5000, 12000);
 
--- Create cursor for Ludzie
+-- Create procedure to assign random job to adults
+DELIMITER $$
+DROP procedure IF EXISTS `firma`.`assignJob`$$
+CREATE PROCEDURE `firma`.`assignJob`()
+BEGIN
+    DECLARE done INT DEFAULT FALSE;
+    DECLARE p VARCHAR(11);
+    DECLARE d DATE;
+    DECLARE pl ENUM('M', 'K');
+    DECLARE z INT;
+    DECLARE pe INT;
+    -- declare cursor
+    DECLARE cur1 CURSOR FOR
+        SELECT PESEL,Data_urodzenia,Plec FROM firma.Ludzie
+        WHERE DATEDIFF(NOW(), Data_urodzenia) > 365 * 18;
+    -- declare handler
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+    -- open cursor
+    OPEN cur1;
+        read_loop: LOOP
+            FETCH cur1 INTO p, d, pl;
+            IF done THEN
+                LEAVE read_loop;
+            END IF;
+            -- assign job
+            IF DATEDIFF(NOW(), d) < 365 * IF(pl = 'M', 65, 60) THEN
+                -- any job
+                SET z = FLOOR(RAND() * 4) + 1;
+                -- random value from pesnja_min to pensja_max
+            ELSE
+                -- any job except lekarz
+                SET z = FLOOR(RAND() * 3) + 1;
+            END IF;
+            SET pe = FLOOR(RAND() * ((SELECT pensja_max FROM firma.Zawody WHERE zawod_id = z) - (SELECT pensja_min FROM firma.Zawody WHERE zawod_id = z)) + (SELECT pensja_min FROM firma.Zawody WHERE zawod_id = z));
+            -- insert into table
+            INSERT INTO firma.Pracownicy (PESEL, zawod_id, pensja)
+            VALUES (p, z, pe);
+        END LOOP;
+    -- close cursor
+    CLOSE cur1;
+END$$
+DELIMITER ;
+
+-- 2)
+
