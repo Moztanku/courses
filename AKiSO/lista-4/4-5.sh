@@ -246,9 +246,9 @@ do
     fi;
 
     moveEntity 1 pacman $pacman_dir;
+    checkCollision $pacman_dir $pacman_x $pacman_y pacman;
     moveEntity 1 ghostA $ghostA_dir;
     moveEntity 1 ghostB $ghostB_dir;
-    checkCollision $pacman_dir $pacman_x $pacman_y pacman;
     ghostAAI;
     ghostBAI;
     checkOrbs;
