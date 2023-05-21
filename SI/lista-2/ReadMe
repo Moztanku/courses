@@ -1,0 +1,10 @@
+Autor: Jacek Zub
+Nr. Indeksu: 268490
+
+Kompilacja: g++ tictactoe_bot.cpp -o tictactoe_bot.o
+Uruchomienie: ./tictactoe_bot.o <numer ip> <numer portu> <gracz> <głębokość przeszukiwania>
+
+Narzędzia i Biblioteki użyte w programie:
+-Standardowe biblioteki C
+-C++ Standard Template Library
+-Plik nagłówkowy board.h
