@@ -1,10 +1,22 @@
-Autor: Jacek Zub
-Nr. Indeksu: 268490
+Maciej Gębala
+2023-03-30
 
-Kompilacja: g++ tictactoe_bot.cpp -o tictactoe_bot.o
-Uruchomienie: ./tictactoe_bot.o <numer ip> <numer portu> <gracz> <głębokość przeszukiwania>
+Pliki:
 
-Narzędzia i Biblioteki użyte w programie:
--Standardowe biblioteki C
--C++ Standard Template Library
--Plik nagłówkowy board.h
+Makefile
+board.h		// zasady i obsługa gry
+game_server.c	// serwer gry 
+game_client.c	// klient dla gry
+
+Kompilator: gcc version 11.3.0
+
+Wywołanie serwera:
+
+./game_server <numer ip> <numer portu>
+
+Wywołanie klienta:
+
+./game_client <numer ip> <numer portu> <gracz>
+
+gracz: 1 dla X lub 2 dla O.
+

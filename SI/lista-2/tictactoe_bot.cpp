@@ -310,6 +310,7 @@ int main(int argc, char *argv[])
       move = (minmaxResult.first+1)*10 + (minmaxResult.second+1);
       setMove(move, player);
       memset(client_message, '\0', sizeof(client_message));
+    //   sprintf(client_message, "%d", move);
       if( send(socket_desc, client_message, strlen(client_message), 0)<0 ) {
         printf("Unable to send message\n");
         return -1;
