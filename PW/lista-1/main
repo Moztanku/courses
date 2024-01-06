@@ -1,0 +1,181 @@
+// package main
+
+// import (
+// 	"fmt"
+// 	"math/rand"
+// 	"strconv"
+// 	"strings"
+// 	"sync"
+// 	"time"
+// )
+
+// const (
+// 	m = 5 // Wymiary kraty
+// 	n = 5
+// )
+
+// type Traveler struct {
+// 	id int
+// 	x  int
+// 	y  int
+
+// 	moveChance float64
+// 	moveInterv time.Duration
+// }
+
+// func (t *Traveler) update(grid *[5][5]bool, mu *sync.Mutex, moveCh chan<- [2]int) {
+// 	for {
+// 		// if t.id == 1 {
+// 		// 	fmt.Println("Traveler", t.id, "is at", t.x, t.y)
+// 		// }
+// 		time.Sleep(t.moveInterv)
+// 		if rand.Float64() < t.moveChance {
+// 			mu.Lock()
+
+// 			var possibleMoves [][2]int
+// 			if t.x > 0 && !(*grid)[t.x-1][t.y] {
+// 				possibleMoves = append(possibleMoves, [2]int{t.x - 1, t.y})
+// 			}
+// 			if t.x < m-1 && !(*grid)[t.x+1][t.y] {
+// 				possibleMoves = append(possibleMoves, [2]int{t.x + 1, t.y})
+// 			}
+// 			if t.y > 0 && !(*grid)[t.x][t.y-1] {
+// 				possibleMoves = append(possibleMoves, [2]int{t.x, t.y - 1})
+// 			}
+// 			if t.y < n-1 && !(*grid)[t.x][t.y+1] {
+// 				possibleMoves = append(possibleMoves, [2]int{t.x, t.y + 1})
+// 			}
+
+// 			if len(possibleMoves) > 0 {
+// 				var move [2]int = possibleMoves[rand.Intn(len(possibleMoves))]
+// 				moveCh <- move
+
+// 				(*grid)[t.x][t.y] = false
+// 				t.x = move[0]
+// 				t.y = move[1]
+// 				(*grid)[t.x][t.y] = true
+// 			}
+// 			mu.Unlock()
+// 		}
+// 	}
+// }
+
+// func grid_update(travelers *[]Traveler, grid *[5][5]bool, mu *sync.Mutex, moveChanel chan<- [2]int) {
+// 	const (
+// 		updateRate   = 100 * time.Millisecond
+// 		appearChance = 0.1
+// 		maxTravelers = 10
+// 	)
+
+// 	if maxTravelers >= m*n {
+// 		panic("Too many travelers")
+// 	}
+
+// 	var id int = 1
+
+// 	for {
+// 		time.Sleep(updateRate)
+// 		if rand.Float64() < appearChance && len(*travelers) < maxTravelers {
+// 			var traveler Traveler
+// 			traveler.id = id
+// 			id++
+// 			traveler.x = rand.Intn(m)
+// 			traveler.y = rand.Intn(n)
+// 			traveler.moveChance = 0.1 + rand.Float64()*0.5
+// 			traveler.moveInterv = time.Duration(100+rand.Intn(501)) * time.Millisecond
+
+// 			mu.Lock()
+// 			if (*grid)[traveler.x][traveler.y] {
+// 				id--
+// 				mu.Unlock()
+// 				continue
+// 			}
+// 			(*grid)[traveler.x][traveler.y] = true
+// 			*travelers = append(*travelers, traveler)
+
+// 			go (*travelers)[len(*travelers)-1].update(grid, mu, moveChanel)
+// 			mu.Unlock()
+// 		}
+// 	}
+// }
+
+// func intToString(i int) string {
+// 	if i == 0 {
+// 		return "  "
+// 	}
+// 	if i == -1 {
+// 		return ".."
+// 	}
+// 	if i < 10 {
+// 		return " " + strconv.Itoa(i)
+// 	}
+// 	return strconv.Itoa(i)
+// }
+
+// func clear() {
+// 	fmt.Print("\033[H\033[2J")
+// }
+
+// func camera_update(travelers *[]Traveler, mu *sync.Mutex, moveChanel <-chan [2]int) {
+// 	const (
+// 		frameTime = 1000 * time.Millisecond
+// 		block     = "░"
+// 	)
+// 	var frame int = 0
+
+// 	for {
+// 		time.Sleep(frameTime)
+// 		clear()
+// 		frame++
+// 		fmt.Println("Frame:", frame)
+// 		// if len(*travelers) > 0 {
+// 		// 	fmt.Println("Traveler 1 is at", (*travelers)[0].x, (*travelers)[0].y)
+// 		// }
+
+// 		arr := [m][n]int{}
+
+// 		mu.Lock()
+// 		for {
+// 			select {
+// 			case move := <-moveChanel:
+// 				arr[move[0]][move[1]] = -1
+// 			default:
+// 				goto end
+// 			}
+// 		}
+// 	end:
+
+// 		for _, traveler := range *travelers {
+// 			arr[traveler.x][traveler.y] = traveler.id
+// 		}
+// 		mu.Unlock()
+
+// 		fmt.Println()
+// 		for y := 0; y < n; y++ {
+// 			for x := 0; x < m; x++ {
+// 				fmt.Print(intToString(arr[x][y]))
+// 				if x != m-1 {
+// 					fmt.Print(block)
+// 				}
+// 			}
+// 			fmt.Print("\n")
+// 			if y != n-1 {
+// 				s := strings.Repeat(block, m*3-1)
+// 				fmt.Println(s)
+// 			}
+// 		}
+// 	}
+// }
+
+// func main() {
+// 	var grid = [5][5]bool{}
+// 	mu := sync.Mutex{}
+
+// 	var travelers = make([]Traveler, 0)
+// 	var moveChanel = make(chan [2]int, n*m)
+
+// 	go grid_update(&travelers, &grid, &mu, moveChanel)
+// 	go camera_update(&travelers, &mu, moveChanel)
+
+// 	for {
+// 	}
