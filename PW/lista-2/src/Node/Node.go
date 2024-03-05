@@ -18,13 +18,17 @@ type Node struct {
 	Req_chan chan Request
 }
 
+func (n Node) GetPos() Pos {
+	return n.pos
+}
+
 func NewNode(pos Pos) Node {
 	return Node{pos: pos, id: types.Empty, taken: false, Req_chan: make(chan Request)}
 }
 
-func (n *Node) Run(id_chan chan ID, requests_chan chan Request) {
+func (n Node) Run(id_chan chan ID, requests_chan chan Request) {
 	update_rate_ms := 100 + rand.Intn(200)
-	traveler_chance := rand.Intn(25)
+	traveler_chance := rand.Intn(5)
 
 	for {
 		time.Sleep(time.Millisecond * time.Duration(update_rate_ms))
@@ -38,7 +42,11 @@ func (n *Node) Run(id_chan chan ID, requests_chan chan Request) {
 			}
 
 			n.id = newID
-			n.taken = true
+			if n.id == types.Danger {
+				n.taken = false
+			} else {
+				n.taken = true
+			}
 
 			switch n.id {
 			case types.Locator:
@@ -48,6 +56,8 @@ func (n *Node) Run(id_chan chan ID, requests_chan chan Request) {
 			default:
 				go traveler.Traveler(n.id, n.pos, requests_chan)
 			}
+
+			requests_chan <- Request{From: n.pos, To: n.pos, Id: n.id, Type: types.Created, Resp: make(chan bool)}
 		}
 
 		select {
@@ -69,10 +79,19 @@ func (n *Node) Run(id_chan chan ID, requests_chan chan Request) {
 					request.Resp <- true
 				}
 			case types.MoveIn:
-				if !n.taken {
+				if !n.taken || n.id == types.Danger {
 					request.Resp <- false
+					requests_chan <- Request{From: n.pos, To: n.pos, Id: n.id, Type: types.Destroy, Resp: make(chan bool)}
 				} else {
 					n.id = request.Id
+					request.Resp <- true
+				}
+			case types.Destroy:
+				if n.id != request.Id {
+					request.Resp <- false
+				} else {
+					n.taken = false
+					n.id = types.Empty
 					request.Resp <- true
 				}
 			}

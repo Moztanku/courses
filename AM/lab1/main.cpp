@@ -167,9 +167,11 @@ void printSpanningTree(const std::vector<Edge>& edges)
     std::cout << "Spanning tree weight: " << edges_weight << std::endl;
 }
 
-std::vector<Vertex> getCycle(const std::vector<Edge>& mst, const std::vector<Vertex>& vertices, const int beginning_vertex_index)
+using Cycle = std::vector<size_t>;
+
+Cycle getCycle(const std::vector<Edge>& mst, const std::vector<Vertex> vertices, const int beginning_vertex_index)
 {
-    std::vector<Vertex> cycle;
+    std::vector<size_t> cycle;
 
     std::vector<std::vector<size_t>> adjacency_list(vertices.size());
     for(const auto& e : mst)
@@ -189,7 +191,7 @@ std::vector<Vertex> getCycle(const std::vector<Edge>& mst, const std::vector<Ver
         size_t v = stack.back();
         stack.pop_back();
 
-        cycle.push_back(vertices[v]);
+        cycle.push_back(v);
 
         for(const auto& w : adjacency_list[v])
         {
@@ -204,9 +206,133 @@ std::vector<Vertex> getCycle(const std::vector<Edge>& mst, const std::vector<Ver
     return cycle;
 }
 
+constexpr float d(const Vertex& v1, const Vertex& v2)
+{
+    const float dx = v1.x - v2.x;
+    const float dy = v1.y - v2.y;
+    return sqrtf(dx * dx + dy * dy);
+}
+
+int getCostDifference(const Cycle& cycle, const std::vector<Vertex>& vertices, const size_t i, const size_t j)
+{
+    int cost_diff = 0;
+
+    if (i == 0) {
+        cost_diff -= d(
+            vertices[cycle[i]], 
+            vertices[cycle[cycle.size() - 1]]) + 0.5f;
+        cost_diff += d(
+            vertices[cycle[j]],
+            vertices[cycle[cycle.size() - 1]]) + 0.5f;
+    } else {
+        cost_diff -= d(
+            vertices[cycle[i - 1]],
+            vertices[cycle[i]]) + 0.5f;
+        cost_diff += d(
+            vertices[cycle[i - 1]],
+            vertices[cycle[j]]
+            ) + 0.5f;
+    }
+
+    if (j + 1 == cycle.size()) {
+        cost_diff -= d(
+            vertices[cycle[0]],
+            vertices[cycle[j]]) + 0.5f;
+        cost_diff += d(
+            vertices[cycle[0]],
+            vertices[cycle[i]]) + 0.5f;
+    } else {
+        cost_diff -= d(
+            vertices[cycle[j + 1]],
+            vertices[cycle[j]]) + 0.5f;
+        cost_diff += d(
+            vertices[cycle[j + 1]],
+            vertices[cycle[i]]) + 0.5f;
+    }
+
+    return cost_diff;
+}
+
+void reverse(Cycle& cycle, const size_t i, const size_t j)
+{
+    if(i == j)
+        return;
+
+    for (size_t k = 0; k < (j - i + 1) / 2; k++)
+        std::swap(cycle[i + k], cycle[j - k]);
+}
+
+uint getCost(const Cycle& cycle, const std::vector<Vertex>& vertices)
+{
+    uint cost = 0;
+    for (size_t i = 0; i < cycle.size() - 1; i++)
+        cost += d(vertices[cycle[i]], vertices[cycle[i + 1]]) + 0.5f;
+
+    cost += d(vertices[cycle[0]], vertices[cycle[cycle.size() - 1]]) + 0.5f;
+
+    return cost;
+}
+
+void localSearch(const Cycle& cycle, const std::vector<Vertex>& vertices)
+{
+    static float avg_res = 0.f;
+    static float avg_it = 0.f;
+    static uint best_res = std::numeric_limits<uint>::max();
+    static size_t count = 0;
+
+    count++;
+
+    if (cycle.size() == 0 && vertices.size() == 0)
+    {
+        std::cout << "Średnia wartość uzyskanego rozwiązania: " << avg_res << std::endl;
+        std::cout << "Średnia liczba kroków poprawy: " << avg_it << std::endl;
+        std::cout << "Najlepsze uzyskane rozwiązanie: " << best_res << std::endl;
+        return;
+    }
+
+    Cycle r = cycle;
+    bool maxima = true;
+    int iterations = -1;
+
+    do {
+        maxima = true;
+        int max_diff = 0;
+        int min_i = 0;
+        int min_j = 0;
+        iterations++;
+        for (size_t i = 0; i < r.size() - 1; i++)
+            for (size_t j = i + 1; j < r.size(); j++)
+            {
+                if (j - i + 2 >= r.size())
+                    continue;
+
+                int cost_diff = getCostDifference(r, vertices, i, j);
+
+                if (cost_diff < max_diff) {
+                    max_diff = cost_diff;
+                    min_i = i;
+                    min_j = j;
+                    maxima = false;
+                }
+            }
+
+        reverse(r, min_i, min_j);
+    } while (!maxima);
+
+    uint cost = getCost(r, vertices);
+
+    avg_res *= (count - 1) / static_cast<float>(count);
+    avg_res += cost / static_cast<float>(count);
+
+    avg_it *= (count - 1) / static_cast<float>(count);
+    avg_it += iterations / static_cast<float>(count);
+
+    best_res = std::min(best_res, cost);
+}
+
 void drawVertices(const std::vector<Vertex>& vertices, const std::vector<Edge>& edges, const std::vector<Vertex>& cycle);
 
-std::vector<size_t> randomPermutation(const size_t size)
+Cycle randomPermutation(const size_t size)
 {
     std::vector<size_t> permutation(size);
     std::iota(permutation.begin(), permutation.end(), 0);
@@ -241,102 +367,6 @@ void experimentMinimumOfPermutations(const std::vector<Vertex>& vertices, const 
     std::cout << std::format("Average minimum of {} groups, each of {} permutations, for {} vertices: {}", N, K, vertices.size(), static_cast<float>(sum) / N) << std::endl;
 }
 
-using Cycle = std::vector<Vertex>;
-
-constexpr float d(const Vertex& v1, const Vertex& v2)
-{
-    const float dx = v1.x - v2.x;
-    const float dy = v1.y - v2.y;
-    return sqrtf(dx * dx + dy * dy);
-}
-
-uint getCost(const Cycle& cycle){
-    uint cost = 0;
-    for(size_t i = 0; i < cycle.size() - 1; i++)
-        cost += d(cycle[i], cycle[i + 1]) + 0.5f;
-
-    cost += d(cycle[0], cycle[cycle.size() - 1]) + 0.5f;
-
-    return cost;
-}
-
-Cycle reverse(const Cycle& cycle, const size_t i, const size_t j)
-{
-    Cycle reversed_cycle = cycle;
-
-    for(size_t k = 0; k < (j - i + 1) / 2; k++)
-        std::swap(reversed_cycle[i + k], reversed_cycle[j - k]);
-
-    return reversed_cycle;
-}
-
-std::vector<Cycle> getNeighbours(const Cycle& cycle)
-{
-    std::vector<Cycle> neighbours;
-
-    constexpr size_t reverse_radius = 20;
-    constexpr size_t reverse_jump = 1;
-
-    for(size_t i = 0; i < cycle.size() - 1; i+=reverse_jump)
-    {
-        for(size_t j = i + 1; j < i + 1 + reverse_radius && j < cycle.size(); j++)
-        {
-            neighbours.push_back(reverse(cycle, i, j));
-        }
-    }
-
-    return neighbours;
-}
-
-std::vector<Vertex> localSearch(const Cycle& cycle)
-{
-    static float avg_res = 0.f;
-    static float avg_it = 0.f;
-    static uint best_res = std::numeric_limits<float>::max();
-    static size_t count = 0;
-
-    if (cycle.size() == 0)
-    {
-        std::cout << "Średnia wartość uzyskanego rozwiązania: " << avg_res << std::endl;
-        std::cout << "Średnia liczba krokół poprawy: " << avg_it << std::endl;
-        std::cout << "Najlepsze uzyskane rozwiązanie: " << best_res << std::endl;
-        return {};
-    }
-
-    count++;
-
-    Cycle r = cycle;
-    std::vector<Cycle> N;
-    bool maxima = false;
-    int iterations = -1;
-
-    do {
-        N = getNeighbours(r);
-        maxima = true;
-        iterations++;
-
-        for(const auto& n : N)
-        {
-            if(getCost(n) < getCost(r))
-            {
-                r = n;
-                maxima = false;
-                break;
-            }
-        }
-    } while (!maxima);
-
-    avg_it *= static_cast<float>(count - 1) / static_cast<float>(count);
-    if (iterations != 0)
-        avg_it += iterations / static_cast<float>(count);
-
-    avg_res *= static_cast<float>(count - 1) / static_cast<float>(count);
-    avg_res += getCost(r) / static_cast<float>(count);
-
-    best_res = std::min(best_res, getCost(r));
-
-    return r;
-}
 
 uint Wmst(const std::vector<Edge>& mst)
 {
@@ -363,14 +393,12 @@ int main(int arg_count, char** args)
     {
         int random_vertex_index = rand() % vertices.size();
 
-        std::vector<Vertex> cycle = getCycle(msp, vertices, random_vertex_index);
-        cycle = localSearch(cycle);
-
-        std::cout << "Pozostało " << std::ceil(std::sqrt(N)) - i - 1 << " cykli" << std::endl;
+        Cycle cycle = randomPermutation(vertices.size());
+        localSearch(cycle, vertices);
     }
 
     std::cout << "Waga minimalnego drzewa rozpinającego: " << Wmst(msp) << std::endl;
-    localSearch({});
+    localSearch({}, {});
     std::cout << std::endl;
 
     return 0;

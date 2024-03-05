@@ -5,11 +5,11 @@ struct Pair {
     int y;
 };
 
-int factorial(const int n);
-int factorial_recursive(const int n);
+int factorial_iter(const int n);
+int factorial_recu(const int n);
 
-int gcd(int a, int b);
-int gcd_recursive(int a, int b);
+int gcd_iter(int a, int b);
+int gcd_recu(int a, int b);
 
-struct Pair solve(int a, int b, int c);
-struct Pair solve_recursive(int a, int b, int c);
+struct Pair solve_iter(int a, int b, int c);
+struct Pair solve_recu(int a, int b, int c);

@@ -19,6 +19,8 @@ const (
 	Reserve Request_Type = 0
 	MoveOut Request_Type = 1
 	MoveIn  Request_Type = 2
+	Created Request_Type = 3
+	Destroy Request_Type = 4
 )
 
 type Request struct {

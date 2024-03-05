@@ -13,6 +13,7 @@ type Request = types.Request
 func Traveler(id ID, pos Pos, requests_chan chan Request) {
 	update_rate_ms := 200 + rand.Intn(400)
 	resp := make(chan bool)
+
 	for {
 		time.Sleep(time.Millisecond * time.Duration(update_rate_ms))
 
@@ -25,7 +26,7 @@ func Traveler(id ID, pos Pos, requests_chan chan Request) {
 			continue
 		}
 
-		request = Request{From: pos, To: nextPos, Id: id, Type: types.MoveOut, Resp: resp}
+		request = Request{From: pos, To: pos, Id: id, Type: types.MoveOut, Resp: resp}
 		requests_chan <- request
 
 		if !<-resp {
@@ -36,7 +37,7 @@ func Traveler(id ID, pos Pos, requests_chan chan Request) {
 		requests_chan <- request
 
 		if !<-resp {
-			continue
+			break
 		}
 
 		pos = nextPos
