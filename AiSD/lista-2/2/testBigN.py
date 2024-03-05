@@ -3,7 +3,7 @@ import numpy as np
 import subprocess as sp
 import matplotlib.pyplot as plt
 
-K: int = 100
+K: int = 10
 N: int = 200000
 Step: int = 1000
 

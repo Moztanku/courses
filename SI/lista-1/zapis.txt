@@ -1,0 +1,85 @@
+Linear conflict:
+
+Solved in 50 moves,
+visited 55094 nodes.
+History : DLDRULDDRURULURDRULLLDDRRUULLDDRRURDDLLURURDLLUUL
+
+Manhattah:
+
+Solved in 50 moves,
+visited 760936 nodes.
+History : DLDRULDDRURULURDRULLLDDRRUULLDDRRURDDLLURURDLLUUL
+
+Linear conflict:
+
+Solved in 52 moves,
+visited 212566 nodes.
+History : RDDDLULDRURRUULDLLDRRULLDDRRURDLURULLURRDLLDDRUUULL
+
+Manhattah:
+
+Solved in 52 moves,
+visited 2097061 nodes.
+History : RDDDLULDRURRUULDLLDRRULLDDRRURDLURULLURRDLLDDRUUULL
+
+Linear conflict:
+
+Solved in 46 moves,
+visited 36658 nodes.
+History : DLURRDLDRURDDLUULURDLLURRRDDDLUURDLLULDRDLUUU
+
+Manhattah:
+
+Solved in 46 moves,
+visited 199059 nodes.
+History : DLURRDLDRURDDLUULURDLLURRRDDDLUURDLLULDRDLUUU
+
+Linear conflict:
+
+Solved in 56 moves,
+visited 774042 nodes.
+History : DRRULURDRULDRDDLLUULDDRRULDRUURDDLULULURDRULDDLURRDLULU
+
+Manhattah:
+
+Solved in 56 moves,
+visited 2689405 nodes.
+History : DRRULURDRULDRDDLLUULDDRURDLURURDDLULULURDRULDDLURRDLULU
+
+Linear conflict:
+
+Solved in 54 moves,
+visited 1296869 nodes.
+History : RULDRDRUULDDLURRRDLLDRRULLURRULLLDRRRDLUULDDRDLURULLU
+
+Manhattah:
+
+Solved in 54 moves,
+visited 5696979 nodes.
+History : RULDRDRUULDDLURRRDLLDRRULLURRULLLDRRRDLUULDDRDLURULLU
+
+Linear conflict:
+
+Solved in 44 moves,
+visited 12756 nodes.
+History : RRDLDLLURRULLDRDDRRULULURRDLLDDRUULURRDLLUL
+
+Manhattah:
+
+Solved in 44 moves,
+visited 29234 nodes.
+History : RRDLDLLURRULLDRDDRRULULURRDLLDDRUULURRDLLUL
+
+Linear conflict:
+
+Solved in 62 moves,
+visited 5116389 nodes.
+History : DRURURDLLURDDRUULDDDLURDRUUULDDDLUULDDRUUURDDLULURRDLLDDRUULU
+
+Manhattah:
+
+Solved in 62 moves,
+visited 31401948 nodes.
+History : DRURURDLLURDDRUULDDDLURDRUUULDDDLUULDDRUUURDDLULURRDLLDDRUULU
+
+50+52+46+56+54+44+62

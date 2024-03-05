@@ -4,7 +4,7 @@ import subprocess as sp
 import matplotlib.pyplot as plt
 
 K: int = 100
-N: int = 50
+N: int = 200
 Step: int = 10
 
 color: map = {

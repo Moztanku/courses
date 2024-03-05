@@ -7,6 +7,7 @@
 #include <time.h>
 #include <queue>
 #include <string>
+#include <map>
 
 using Puzzle = uint64_t;
 
@@ -61,9 +62,45 @@ std::vector<Puzzle> getPossibleMoves(Puzzle p){
     return moves;
 }
 
+char getMove(Puzzle p1, Puzzle p2){
+    int pos1 = getPosition(p1);
+    int pos2 = getPosition(p2);
+    
+    switch(pos1 - pos2){
+        case -1:
+            return 'L';
+        case 1:
+            return 'R';
+        case -4:
+            return 'U';
+        case 4:
+            return 'D';
+        default:
+            return 'X';
+    }
+}
+
+void printHistory(std::map<Puzzle,Puzzle>& h, Puzzle i){
+    std::cout << "History : ";
+
+    std::vector<Puzzle> history;
+    Puzzle previous;
+
+    while((previous = h[i]) != 0 ){
+        history.emplace(history.begin(), i);
+        i = previous;
+    }
+
+    for(auto i = history.begin(); i != history.end() - 1; i++){
+        std::cout << getMove(*i, *(i + 1));
+    }
+    std::cout << "\n";
+}
+
 void solve(Puzzle puzzle, std::function<int(Puzzle)> heuristic){
     std::priority_queue<std::pair<int, Puzzle>, std::vector<std::pair<int, Puzzle>>, std::greater<std::pair<int, Puzzle>>> queue;
     std::set<Puzzle> visited;
+    std::map<Puzzle,Puzzle> history;
 
     queue.push(std::make_pair(heuristic(puzzle), puzzle));
 
@@ -75,14 +112,16 @@ void solve(Puzzle puzzle, std::function<int(Puzzle)> heuristic){
         int cost = d - heuristic(p);
 
         if(p == solved){
-            std::cout << "Solved in " << std::dec << cost << " moves," << std::endl;
-            std::cout << "visited " << visited.size() << " nodes." << std::endl;
+            std::cout << "\nSolved in " << std::dec << cost << " moves,\n";
+            std::cout << "visited " << visited.size() << " nodes.\n";
+            printHistory(history,p);
             return;
         }
 
         std::vector<Puzzle> moves = getPossibleMoves(p);
         for(Puzzle move : moves){
             if(visited.find(move) == visited.end()){
+                history[move] = p;
                 queue.push(std::make_pair(cost + 1 + heuristic(move), move));
             }
         }
@@ -126,15 +165,28 @@ Puzzle createNMovePuzzle(int n){
 
 int main(int argc, char** argv) {
     srand(time(NULL));
-    Puzzle puzzle = createPuzzle();
-    // Puzzle puzzle = createNMovePuzzle(100);
-    printPuzzle(puzzle);
+        Puzzle puzzle = createPuzzle();
+        std::cout << "\nLinear conflict:\n";
+        solve(puzzle, [](Puzzle p){
+            return manhattanDistance(p) + linearConflict(p);
+        }); 
+        std::cout << "\nManhattah:\n";
+        solve(puzzle, [](Puzzle p){
+            return manhattanDistance(p);
+        });
+    // Puzzle puzzle = createPuzzle();
+    // // Puzzle puzzle = createNMovePuzzle(100);
+    // printPuzzle(puzzle);
 
-    // solve(puzzle, linearConflict);
-    solve(puzzle, [](Puzzle p){
-        return manhattanDistance(p) + linearConflict(p);
-    });
-    solve(puzzle, manhattanDistance);
+    // // solve(puzzle, linearConflict);
+    // // solve(
+    // //     puzzle,
+    // //     hammingDistance
+    // // );
+    // solve(puzzle, [](Puzzle p){
+    //     return manhattanDistance(p) + linearConflict(p);
+    // });
+    // solve(puzzle, manhattanDistance);
 
     return 0;
 }
@@ -242,5 +294,4 @@ void printPuzzle(Puzzle puzzle){
             std::cout << std::endl;
         }
     }
-    std::cout << std::endl;
 }
