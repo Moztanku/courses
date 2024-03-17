@@ -56,10 +56,4 @@ package body lib is
 
         return result;
     end egcd;
-
-    function solve_C(a, b, c : Integer) return Pair_Ptr is
-        result : Pair_Ptr := new Pair'(solve(a, b, c));
-    begin
-        return result;
-    end solve_C;
 end lib;

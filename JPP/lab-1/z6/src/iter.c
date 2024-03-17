@@ -56,6 +56,8 @@ int gcd(int a, int b)
         a = b;
         b = temp % b;
     }
+
+    return a;
 }
 
 Pair solve(int a, int b, int c)

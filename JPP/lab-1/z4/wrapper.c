@@ -8,7 +8,7 @@ extern void adafinal    (void);
 
 extern int   ada_factorial  (int);
 extern int   ada_gcd        (int, int);
-extern Pair* ada_solve      (int, int, int);
+extern Pair  ada_solve      (int, int, int);
 
 int factorial(int n)
 {
@@ -22,12 +22,8 @@ int gcd(int a, int b)
 
 Pair solve(int a, int b, int c)
 {
-    Pair* result = ada_solve(a, b, c);
-    Pair p = {result->x, result->y};
-
-    free(result);
-
-    return p;
+    Pair result = ada_solve(a, b, c);
+    return result;
 }
 
 void wrapperInit(void)

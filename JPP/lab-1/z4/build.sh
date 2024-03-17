@@ -1,4 +1,4 @@
-mkdir build
+mkdir build 2> /dev/null
 cd build
 gcc -std=c99 -Wall -c ../wrapper.c -o wrapper.o
 gcc -std=c99 -Wall -c ../test.c -o test.o
