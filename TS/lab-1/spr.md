@@ -105,4 +105,5 @@ Wireshark – program do analizy pakietów sieciowych. Pozwala na przechwytywani
 
 
 Przykładowe użycie programu Wireshark do wyświetlenia pakietów wychodzących z innego komputera w sieci lokalnej.
+
 ![Screenshot Wiresharka](image.png)
