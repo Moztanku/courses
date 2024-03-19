@@ -12,8 +12,6 @@ All courses I have taken during my studies at Wroclaw University of Science and 
 #### AAiK - Algebra Abstrakcyjna i Kodowanie
 #### MD - Matematyka Dyskretna
 #### KP - Kurs Programowania
-#### Problemy Prawne Informatyki
-#### Fizyka
 
 ## IIIrd semester
 #### MPiS - Metody Probabilistyczne i Statystyka
@@ -39,9 +37,11 @@ All courses I have taken during my studies at Wroclaw University of Science and 
 #### AM - Algorytmy Metaheurystyczne
 #### AMo - Aplikacje Mobilne
 
-### Other
-##### Język Angielski
-##### Język Francuski
-##### Kulturystyka
-##### Komunikacja Społeczna
-##### Podstawy Ekonomii
+## Other
+#### Język Angielski
+#### Język Francuski
+#### Kulturystyka
+#### Komunikacja Społeczna
+#### Podstawy Ekonomii
+#### Problemy Prawne Informatyki
+#### Fizyka
