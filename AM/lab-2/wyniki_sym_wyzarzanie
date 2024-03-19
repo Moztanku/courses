@@ -1,0 +1,104 @@
+data/xqf131.tsp
+Parametry: T0 = 1000, Talpha = 0.8, Tend = 1e-05
+Wyniki: średnia = 592.5697, najlepszy = 567
+
+Parametry: T0 = 10, Talpha = 0.92, Tend = 1e-06
+Wyniki: średnia = 583.68677, najlepszy = 566
+
+data/xqg237.tsp
+Parametry: T0 = 1000, Talpha = 0.8, Tend = 1e-05
+Wyniki: średnia = 1115.8755, najlepszy = 1050
+
+Parametry: T0 = 10, Talpha = 0.92, Tend = 1e-06
+Wyniki: średnia = 1087.195, najlepszy = 1047
+
+data/pma343.tsp
+Parametry: T0 = 1000, Talpha = 0.8, Tend = 1e-05
+Wyniki: średnia = 1486.3158, najlepszy = 1421
+
+Parametry: T0 = 10, Talpha = 0.92, Tend = 1e-06
+Wyniki: średnia = 1460.6262, najlepszy = 1409
+
+data/pka379.tsp
+Parametry: T0 = 1000, Talpha = 0.8, Tend = 1e-05
+Wyniki: średnia = 1447.566, najlepszy = 1397
+
+Parametry: T0 = 10, Talpha = 0.92, Tend = 1e-06
+Wyniki: średnia = 1424.7407, najlepszy = 1378
+
+data/bcl380.tsp
+Parametry: T0 = 1000, Talpha = 0.8, Tend = 1e-05
+Wyniki: średnia = 1839.6431, najlepszy = 1728
+
+Parametry: T0 = 10, Talpha = 0.92, Tend = 1e-06
+Wyniki: średnia = 1803.2118, najlepszy = 1691
+
+data/pbl395.tsp
+Parametry: T0 = 1000, Talpha = 0.8, Tend = 1e-05
+Wyniki: średnia = 1442.3656, najlepszy = 1383
+
+Parametry: T0 = 10, Talpha = 0.92, Tend = 1e-06
+Wyniki: średnia = 1415.3224, najlepszy = 1347
+
+data/pbk411.tsp
+Parametry: T0 = 1000, Talpha = 0.8, Tend = 1e-05
+Wyniki: średnia = 1516.9849, najlepszy = 1440
+
+Parametry: T0 = 10, Talpha = 0.92, Tend = 1e-06
+Wyniki: średnia = 1487.0026, najlepszy = 1425
+
+data/pbn423.tsp
+Parametry: T0 = 1000, Talpha = 0.8, Tend = 1e-05
+Wyniki: średnia = 1546.9814, najlepszy = 1470
+
+Parametry: T0 = 10, Talpha = 0.92, Tend = 1e-06
+Wyniki: średnia = 1516.567, najlepszy = 1442
+
+data/pbm436.tsp
+Parametry: T0 = 1000, Talpha = 0.8, Tend = 1e-05
+Wyniki: średnia = 1637.9851, najlepszy = 1546
+
+Parametry: T0 = 10, Talpha = 0.92, Tend = 1e-06
+Wyniki: średnia = 1600.7402, najlepszy = 1527
+
+data/xql662.tsp
+Parametry: T0 = 1000, Talpha = 0.8, Tend = 1e-05
+Wyniki: średnia = 3121.1104, najlepszy = 2978
+
+Parametry: T0 = 10, Talpha = 0.92, Tend = 1e-06
+Wyniki: średnia = 2849.728, najlepszy = 2707
+
+data/xit1083.tsp
+Parametry: T0 = 1000, Talpha = 0.8, Tend = 1e-05
+Wyniki: średnia = 5734.679, najlepszy = 5529
+
+Parametry: T0 = 10, Talpha = 0.92, Tend = 1e-06
+Wyniki: średnia = 4355.3213, najlepszy = 4213
+
+data/icw1483.tsp
+Parametry: T0 = 1000, Talpha = 0.8, Tend = 1e-05
+Wyniki: średnia = 8933.263, najlepszy = 8681
+
+Parametry: T0 = 10, Talpha = 0.92, Tend = 1e-06
+Wyniki: średnia = 6142.4688, najlepszy = 6004
+
+data/djc1785.tsp
+Parametry: T0 = 1000, Talpha = 0.8, Tend = 1e-05
+Wyniki: średnia = 14023.421, najlepszy = 13604
+
+Parametry: T0 = 10, Talpha = 0.92, Tend = 1e-06
+Wyniki: średnia = 9327.989, najlepszy = 9077
+
+data/dcb2086.tsp
+Parametry: T0 = 1000, Talpha = 0.8, Tend = 1e-05
+Wyniki: średnia = 18351.377, najlepszy = 17849
+
+Parametry: T0 = 10, Talpha = 0.92, Tend = 1e-06
+Wyniki: średnia = 11652.076, najlepszy = 11394
+
+data/pds2566.tsp
+Parametry: T0 = 1000, Talpha = 0.8, Tend = 1e-05
+Wyniki: średnia = 25734.463, najlepszy = 25093
+
+Parametry: T0 = 10, Talpha = 0.92, Tend = 1e-06
+Wyniki: średnia = 15937.461, najlepszy = 15569

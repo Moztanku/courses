@@ -1,0 +1,104 @@
+data/xqf131.tsp
+Parametry: tabu_size = 100, iterations = 1000
+Wyniki: średnia = 642.141, najlepszy = 597
+
+Parametry: tabu_size = 200, iterations = 900
+Wyniki: średnia = 642.90247, najlepszy = 596
+
+data/xqg237.tsp
+Parametry: tabu_size = 100, iterations = 1000
+Wyniki: średnia = 1198.7686, najlepszy = 1113
+
+Parametry: tabu_size = 200, iterations = 900
+Wyniki: średnia = 1205.7616, najlepszy = 1119
+
+data/pma343.tsp
+Parametry: tabu_size = 100, iterations = 1000
+Wyniki: średnia = 1625.6145, najlepszy = 1499
+
+Parametry: tabu_size = 200, iterations = 900
+Wyniki: średnia = 1641.5498, najlepszy = 1523
+
+data/pka379.tsp
+Parametry: tabu_size = 100, iterations = 1000
+Wyniki: średnia = 1623.3088, najlepszy = 1506
+
+Parametry: tabu_size = 200, iterations = 900
+Wyniki: średnia = 1636.6587, najlepszy = 1507
+
+data/bcl380.tsp
+Parametry: tabu_size = 100, iterations = 1000
+Wyniki: średnia = 2036.1581, najlepszy = 1869
+
+Parametry: tabu_size = 200, iterations = 900
+Wyniki: średnia = 2057.0227, najlepszy = 1883
+
+data/pbk411.tsp
+Parametry: tabu_size = 100, iterations = 1000
+Wyniki: średnia = 1718.2928, najlepszy = 1567
+
+Parametry: tabu_size = 200, iterations = 900
+Wyniki: średnia = 1739.1265, najlepszy = 1589
+
+data/pbn423.tsp
+Parametry: tabu_size = 100, iterations = 1000
+Wyniki: średnia = 1763.0009, najlepszy = 1579
+
+Parametry: tabu_size = 200, iterations = 900
+Wyniki: średnia = 1778.83, najlepszy = 1617
+
+data/pbl395.tsp
+Parametry: tabu_size = 100, iterations = 1000
+Wyniki: średnia = 1639.6826, najlepszy = 1498
+
+Parametry: tabu_size = 200, iterations = 900
+Wyniki: średnia = 1659.8204, najlepszy = 1489
+
+data/pbm436.tsp
+Parametry: tabu_size = 100, iterations = 1000
+Wyniki: średnia = 1861.762, najlepszy = 1689
+
+Parametry: tabu_size = 200, iterations = 900
+Wyniki: średnia = 1884.613, najlepszy = 1700
+
+data/xql662.tsp
+Parametry: tabu_size = 100, iterations = 1000
+Wyniki: średnia = 3417.6543, najlepszy = 3128
+
+Parametry: tabu_size = 200, iterations = 900
+Wyniki: średnia = 3465.9692, najlepszy = 3149
+
+data/icw1483.tsp
+Parametry: tabu_size = 100, iterations = 1000
+Wyniki: średnia = 7468.0103, najlepszy = 6740
+
+Parametry: tabu_size = 200, iterations = 900
+Wyniki: średnia = 7646.319, najlepszy = 6878
+
+data/djc1785.tsp
+Parametry: tabu_size = 100, iterations = 1000
+Wyniki: średnia = 10571.363, najlepszy = 9769
+
+Parametry: tabu_size = 200, iterations = 900
+Wyniki: średnia = 10745.44, najlepszy = 9703
+
+data/dcb2086.tsp
+Parametry: tabu_size = 100, iterations = 1000
+Wyniki: średnia = 12553.133, najlepszy = 11315
+
+Parametry: tabu_size = 200, iterations = 900
+Wyniki: średnia = 12745.49, najlepszy = 11449
+
+data/xit1083.tsp
+Parametry: tabu_size = 100, iterations = 1000
+Wyniki: średnia = 5486.52, najlepszy = 5012
+
+Parametry: tabu_size = 200, iterations = 900
+Wyniki: średnia = 5609.01, najlepszy = 5058
+
+data/pds2566.tsp
+Parametry: tabu_size = 100, iterations = 1000
+Wyniki: średnia = 15787.011, najlepszy = 14145
+
+Parametry: tabu_size = 200, iterations = 900
+Wyniki: średnia = 16392.906, najlepszy = 14392
