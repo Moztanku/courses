@@ -105,3 +105,4 @@ local.properties
 build/
 target/
 bin/
+obj/
