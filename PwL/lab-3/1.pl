@@ -1,3 +1,4 @@
+% zad. 1
 
 sum([], 0).
 sum([X | L], S) :-
@@ -20,21 +21,44 @@ variance(L, X) :-
     length(L, N),
     X is S / N.
 
-sublist(L, X) :-
-    append(_, L1, L),
-    append(X, _, L1).
+% zad. 2
 
-max_sum(L, X) :-
-    sublist(L, L1),
-    sum(L1, X),
-    forall(sublist(L,L2),(sum(L2,S), X >= S)).
+max_sum_([],X,_,X).
 
-# even_permutation(L, X) :-
-
-permutation(L, 0, L).
-permutation(L, 1, L) :-
-    fail.
-
-permutation(L, N, X) :-
-    forall(member(L, M), member(X, M)),
+max_sum_([I|L], Max, Curr, X) :-
+    J is Curr + I,
+    (J > 0 -> (
+        Next is J,
+        (Next > Max -> M1 is Next ; M1 is Max)
+    ); (
+        Next is 0,
+        M1 is Max
+    )),
+    max_sum_(L, M1, Next, X).
     
+max_sum(L,X) :-
+    max_sum_(L,0,0,X).
+
+% zad. 3
+
+inversions([], 0).
+inversions([X | L], N) :-
+    findall(Y, (member(Y, L), Y < X), L1),
+    length(L1, N1),
+    inversions(L, N2),
+    N is N1 + N2.
+
+permutation([], []).
+permutation([X | L], P) :-
+    permutation(L, P1),
+    select(X, P, P1).
+
+even_permutation(L, R) :-
+    permutation(L, R),
+    inversions(R, N),
+    0 is N mod 2.
+
+odd_permutation(L, R) :-
+    permutation(L, R),
+    inversions(R, N),
+    1 is N mod 2.
