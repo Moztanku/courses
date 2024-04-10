@@ -75,11 +75,11 @@ auto div(const Polynomial& f, const Polynomial& g) -> std::pair<Polynomial, Poly
 
     while (LT(p) != 0)
     {
-        if (p.size() >= g.size() || (p.size() == g.size() && LT(p) >= LT(g)))
+        if (p.size() >= g.size())
         {
             // q = q + LT(p) / LT(g);
             // LT(p) / LT(g) : ax^m / bx^n = (a / b) * x^(m - n)
-            double a = std::floor(LT(p) / LT(g));
+            double a = LT(p) / LT(g);
             size_t n = p.size() - g.size();
             q[n] += a;
 
@@ -88,9 +88,6 @@ auto div(const Polynomial& f, const Polynomial& g) -> std::pair<Polynomial, Poly
             {
                 p[n + i] -= a * g[i];
             }
-
-            std::cout << to_string(p) << std::endl;
-            std::cout << to_string(q) << std::endl;
 
             // Remove leading zeros
             while (!p.empty() && is_equal(p.back(), 0.0))
@@ -121,25 +118,23 @@ auto gcd(const Polynomial& f, const Polynomial& g) -> Polynomial
 
     Polynomial r = div(f, g).second;
 
-    // Polynomial r = f;
-
-    // for (size_t i = 0; i < r.size(); i++)
-    // {
-    //     r[i] -= g[i];
-    // }
-
-    // while (!r.empty() && is_equal(r.back(), 0.0))
-    // {
-    //     r.pop_back();
-    // }
-
-    std::cout << to_string(f) << " / " << to_string(g) << " = " << to_string(r) << std::endl;
-
     return 
         g.size() > r.size() ? gcd(g, r) :
         r.size() > g.size() ? gcd(r, g) :
               LT(g) > LT(r) ? gcd(g, r) :
                               gcd(r, g);
+}
+
+auto lcm(const Polynomial& f, const Polynomial& g) -> Polynomial
+{
+    Polynomial mul((f.size() - 1) + (g.size() - 1) + 1, 0.0);
+
+    for (size_t i = 0; i < f.size(); i++)
+        for (size_t j = 0; j < g.size(); j++)
+            if (!is_equal(f[i], 0.0) && !is_equal(g[j], 0.0))
+                mul[i + j] += f[i] * g[j];
+
+    return div(mul, gcd(f, g)).first;
 }
 
 int main()
@@ -152,7 +147,7 @@ int main()
     std::cout <<
         std::format
         (
-            "{} / {} = {} + {}",
+            "{} / {} = {} r: {}",
             to_string(f),
             to_string(g),
             to_string(q),
@@ -163,13 +158,23 @@ int main()
     g = {1.0,2.0,1.0};
 
     auto gcd_result = gcd(f, g);
+    auto lcm_result = lcm(f, g);
 
     std::cout <<
         std::format
         (
-            "NWD({} / {}) = {}",
+            "<{}, {}> = <{}>",
             to_string(f),
             to_string(g),
             to_string(gcd_result)
+        ) << std::endl;
+
+    std::cout <<
+        std::format
+        (
+            "<{}>∩<{}> = <{}>",
+            to_string(f),
+            to_string(g),
+            to_string(lcm_result)
         ) << std::endl;
 }
