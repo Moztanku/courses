@@ -83,7 +83,7 @@ class Galois
             return os << l.m_value;
         }
 
-        constexpr static int64_t order = order;
+        constexpr static int64_t order = P;
     private:
         int64_t m_value{};
 
