@@ -88,6 +88,11 @@ class Galois
             return std::to_string(m_value);
         }
 
+        constexpr auto get_value() const -> int64_t
+        {
+            return m_value;
+        }
+
         constexpr static int64_t order = P;
     private:
         int64_t m_value{};

@@ -4,7 +4,7 @@ C = clang
 CFLAGS = -std=c17 -O3
 
 CC = clang++
-CXXFLAGS = -std=c++20 -O3 -I inc
+CXXFLAGS = -std=c++23 -O3 -I inc
 
 CC2 = cppfront
 CXX2FLAGS = -pure-cpp2 -output stdout
