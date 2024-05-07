@@ -12,5 +12,5 @@ wyrazenie(X, Y, Result):-
         (Y is W1 + W2, Result = R1 + R2);
         (Y is W1 - W2, Result = R1 - R2);
         (Y is W1 * W2, Result = R1 * R2);
-        (Y is W1 / W2, Result = R1 / R2)
+        (W2 =/= 0, Y is W1 / W2, Result = R1 / R2)
     ).
