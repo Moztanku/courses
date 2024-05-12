@@ -9,24 +9,24 @@
 
 auto main() -> int
 {
-    // using GF = Galois<1234567891>;
+    using GF = Galois<1234567891>;
 
-    // DHSetup<GF> dh_setup;
-    // User user(dh_setup);
+    DHSetup<GF> dh_setup;
 
-    // user.set_key(1001);
+    User Alice(dh_setup);
+    User Bob(dh_setup);
 
-    // GF message = 42;
-    // std::cout << "Message: " << message << "\n";
-    // std::cout << "Encrypted message: " << user.encrypt(message) << "\n";
-    // std::cout << "Decrypted message: " << user.decrypt(user.encrypt(message)) << "\n";
+    Alice.set_key(Bob.get_public_key());
+    Bob.set_key(Alice.get_public_key());
+
+    GF message = 42;
+
+    GF encrypted_message = Alice.encrypt(message);
+    GF decrypted_message = Bob.decrypt(encrypted_message);
+
+    std::cout << "Message: " << message << "\n";
+    std::cout << "Encrypted message: " << encrypted_message << "\n";
+    std::cout << "Decrypted message: " << decrypted_message << "\n";
     
-    DHSetup<Galois<1234577>> dh;
-    std::cout << std::format
-    (
-        "{} ^ {} mod {} = {}",
-        2, 241542, 1234577, dh.power(2,241542,true).get_value()
-    );
-
     return 0;
 }

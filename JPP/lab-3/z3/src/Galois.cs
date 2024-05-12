@@ -2,19 +2,19 @@ namespace Galois
 {
     public struct Order1234577
     {
-        public const int value = 1234577;
+        public const long value = 1234577;
     }
 
     public struct Order1234567891
     {
-        public const int value = 1234567891;
+        public const long value = 1234567891;
     }
 
     public class Field<T> : IComparable<Field<T>> where T : struct
     {
-        public const int order = Order1234577.value;
+        public const long order = Order1234577.value;
 
-        public Field(int value)
+        public Field(long value)
         {
             m_value = value % order;
         }
@@ -85,22 +85,23 @@ namespace Galois
         {
             return new Field<T>(egcd(a.m_value));
         }
-        private int m_value;
+        private long m_value;
+        public long Value { get { return m_value; } }
 
-        private static int egcd(int a)
+        private static long egcd(long a)
         {
-            int b = order;
+            long b = order;
 
-            int x = 1, y = 0;
-            int x1 = 0, y1 = 1;
+            long x = 1, y = 0;
+            long x1 = 0, y1 = 1;
 
             while (b != 0)
             {
-                int q = a / b;
+                long q = a / b;
 
-                int x2 = x - q * x1;
-                int y2 = y - q * y1;
-                int c = a - q * b;
+                long x2 = x - q * x1;
+                long y2 = y - q * y1;
+                long c = a - q * b;
 
                 x = x1;
                 y = y1;

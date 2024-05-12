@@ -31,13 +31,6 @@ public class DHSetup<T extends Galois>
 
         while (exp > 0)
         {
-            // if (flag)
-            // System.out.printf(
-            //     "Base: %s, exp: %s, res: %s\n",
-            //     base.toString(),
-            //     Integer.toString(exp),
-            //     result.toString()
-            // );
             if (exp % 2 == 1)
                 result.set(
                     result.mul(base)
@@ -69,7 +62,6 @@ public class DHSetup<T extends Galois>
         T generator = supplier.get();
 
         do {
-            // long random = ThreadLocalRandom.current().nextInt(2, generator.order());
             long random = ThreadLocalRandom.current().nextLong(2, generator.order());
             generator.set(
                 random

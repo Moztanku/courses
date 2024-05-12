@@ -26,13 +26,6 @@ public class User<T extends Galois>
             key,
             private_key.get_value()
         );
-
-        System.out.printf(
-            "%s ^ %s = %s\n",
-            key.toString(),
-            private_key.toString(),
-            cipher_key.toString()
-        );
     }
 
     public T encrypt(T m)
