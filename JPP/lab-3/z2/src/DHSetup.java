@@ -1,81 +1,109 @@
+import java.util.function.Supplier;
 import java.util.ArrayList;
-import java.util.Random;
+import java.util.Collections;
+import java.util.concurrent.ThreadLocalRandom;
 
-public class DHSetup<GF>
+public class DHSetup<T extends Galois>
 {
-    private interface GF
+    private Supplier<T> supplier;
+    private final T generator;
+
+    public DHSetup(Supplier<T> supplier)
     {
-        public static final Integer order = 1;
-        public static GF zero(){ return null; };
-        public static GF one(){ return null; };
-        public int get_value();
-        public void set(Integer m_value);
-        public GF mul(GF other);
+        this.supplier = supplier;
+        this.generator = get_random_generator();
     }
 
-    public DHSetup(){}
-
-    public GF get_generator()
+    public T get_generator()
     {
         return generator;
     }
 
-    public GF power(GF base, int exp)
+    public boolean flag = false;
+
+    public T power(T _base, long exp)
     {
-        GF result = GF.one();
+        T result = supplier.get();
+        T base = supplier.get();
+        
+        base.set(_base.get_value());
+        result.set(1);
 
         while (exp > 0)
         {
+            // if (flag)
+            // System.out.printf(
+            //     "Base: %s, exp: %s, res: %s\n",
+            //     base.toString(),
+            //     Integer.toString(exp),
+            //     result.toString()
+            // );
             if (exp % 2 == 1)
-                result = result.mul(base);
+                result.set(
+                    result.mul(base)
+                );
 
-            exp >>= 1;
-            base = base.mul(base);
+            base.set(
+                base.mul(base)
+            );
+
+            exp /= 2;
         }
 
         return result;
     }
 
-    private final GF generator = get_random_generator();
-
-    private GF get_random_generator()
+    public T get_random_private_key()
     {
-        Random rand = new Random();
-        int phi = GF.order - 1;
+        T key = supplier.get();
 
-        GF generator = GF.zero();
+        key.set(
+            ThreadLocalRandom.current().nextLong(2, generator.order() - 1)
+        );
 
-        do
-        {
-            generator.set(rand.nextInt(2, phi));
+        return key;
+    }
+
+    private T get_random_generator()
+    {
+        T generator = supplier.get();
+
+        do {
+            // long random = ThreadLocalRandom.current().nextInt(2, generator.order());
+            long random = ThreadLocalRandom.current().nextLong(2, generator.order());
+            generator.set(
+                random
+            );
         } while (!is_generator(generator));
 
         return generator;
     }
 
-    private boolean is_generator(GF generator)
+    private boolean is_generator(T generator)
     {
-        final Integer phi = GF.order - 1;
-        final ArrayList<Integer> prime_factors = get_prime_factors(phi);
+        final long phi = generator.order() - 1;
 
-        for (Integer prime : prime_factors)
-            if (power(generator, phi / prime).equals(GF.one()))
+        final ArrayList<Long> prime_factors = get_prime_factors(phi);
+
+        for (Long factor : prime_factors)
+        {
+            if (power(generator, phi / factor).get_value() == 1)
                 return false;
+        }
 
         return true;
     }
 
-    private static ArrayList<Integer> get_prime_factors(Integer phi)
+    static ArrayList<Long> get_prime_factors(Long phi)
     {
-        ArrayList<Integer> prime_factors = new ArrayList<Integer>();
+        ArrayList<Long> prime_factors = new ArrayList<>();
 
-        for (Integer i = 2; i * i <= phi; i++)
+        for (Long i = 2l; i * i <= phi; i++)
         {
             while (phi % i == 0)
             {
-                if (binary_search(prime_factors, i) == false)
+                if (!prime_factors.contains(i))
                     prime_factors.add(i);
-
                 phi /= i;
             }
         }
@@ -83,33 +111,8 @@ public class DHSetup<GF>
         if (phi > 1)
             prime_factors.add(phi);
 
+        Collections.sort(prime_factors);
+
         return prime_factors;
-    }
-
-    private static boolean binary_search(ArrayList<Integer> arr, Integer x)
-    {
-        int l = 0;
-        int r = arr.size() - 1;
-
-        while (l <= r)
-        {
-            int m = l + (r - l) / 2;
-
-            if (arr.get(m) == x)
-            {
-                return true;
-            }
-
-            if (arr.get(m) < x)
-            {
-                l = m + 1;
-            }
-            else
-            {
-                r = m - 1;
-            }
-        }
-
-        return false;
     }
 }

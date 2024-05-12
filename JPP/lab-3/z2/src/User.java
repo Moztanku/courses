@@ -1,48 +1,63 @@
-import java.util.Random;
+import javax.management.RuntimeErrorException;
 
-public class User <GF> {
-    private interface GF
+public class User<T extends Galois> 
+{
+    private final DHSetup<T> dh_setup;
+    private final T private_key;
+    private T cipher_key;
+
+    public User(DHSetup<T> dh_setup)
     {
-        public static final Integer order = 1;
-        public static GF zero(){ return null; };
-        public static GF one(){ return null; };
-        public int get_value();
-        public void set(Integer m_value);
-        public GF mul(GF other);
+        this.dh_setup = dh_setup;
+        this.private_key = dh_setup.get_random_private_key();
     }
 
-    User(DHSetup<GF> setup) {
-        this.setup = setup;
-        this.private_key = get_random_private_key();
-    }
-
-    public GF get_public_key()
+    public T get_public_key()
     {
-        return (GF) setup.power(
-            setup.get_generator(),
+        return dh_setup.power(
+            dh_setup.get_generator(),
             private_key.get_value()
         );
     }
 
-    public void set_cipher_key(GF other_public_key)
+    public void set_key(T key)
     {
-        cipher_key = setup.power(
-            other_public_key,
+        this.cipher_key = dh_setup.power(
+            key,
             private_key.get_value()
+        );
+
+        System.out.printf(
+            "%s ^ %s = %s\n",
+            key.toString(),
+            private_key.toString(),
+            cipher_key.toString()
         );
     }
 
-    private final DHSetup<GF> setup;
-    private final GF private_key;
-    private GF cipher_key;
-
-    private GF get_random_private_key()
+    public T encrypt(T m)
     {
-        Random rand = new Random();
+        if (cipher_key.get_value() == 0)
+            throw new RuntimeErrorException(null);
 
-        GF result = GF.zero();
-        result.set(rand.nextInt(1, GF.order - 1));
+        T res = dh_setup.get_random_private_key();
+        res.set(
+            m.mul(cipher_key)
+        );
 
-        return result;
+        return res;
+    }
+
+    public T decrypt(T c)
+    {
+        if (cipher_key.get_value() == 0)
+            throw new RuntimeErrorException(null);
+
+        T res = dh_setup.get_random_private_key();
+        res.set(
+            c.div(cipher_key)
+        );
+
+        return res;
     }
 }
