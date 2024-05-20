@@ -1,0 +1,105 @@
+numPhilisophers:    const int = 20;
+hunger:             const int = 10;
+
+Fork: type = {
+    mtx: std::mutex;
+
+    take: (inout this) = {
+        mtx.lock();
+    }
+
+    put: (inout this) -> void = {
+        mtx.unlock();
+    }
+}
+
+// Only not C++2 function, Idk how to create static variables
+auto print(std::string str) -> void{
+    static std::mutex mtx;
+
+    mtx.lock();
+    std::cout << str << std::endl;
+    mtx.unlock();
+}
+
+Philosopher: type = {
+    operator=: (out this, id: int, lower: *Fork, higher: *Fork) = {
+        m_id = id;
+        m_lower = lower;
+        m_higher = higher;
+    }
+
+    operator=: (out this, that) = {
+        m_id = that.m_id;
+        m_lower = that.m_lower;
+        m_higher = that.m_higher;
+    }
+
+    public m_id:      int;
+    public m_lower:   *Fork;
+    public m_higher:  *Fork;
+
+    think: (inout this) -> void = {
+        print("Philosopher " + std::to_string(m_id) + " is thinking");
+
+        duration: std::chrono::milliseconds = std::chrono::milliseconds(200 + rand() % 500);
+        std::this_thread::sleep_for(duration);
+    }
+
+    eat: (inout this) -> void = {
+        print("Philosopher " + std::to_string(m_id) + " is eating");
+
+        duration: std::chrono::milliseconds = std::chrono::milliseconds(200 + rand() % 1000);
+        std::this_thread::sleep_for(duration);
+    }
+
+    done: (inout this) -> void = {
+        print("Philosopher " + std::to_string(m_id) + " is done");
+    }
+
+    run: (inout this) -> void = {
+        (copy i := 0)
+        while i < hunger next i++ {
+            think();
+
+            m_lower*.take();
+            m_higher*.take();
+
+            eat();
+
+            m_higher*.put();
+            m_lower*.put();
+        }
+
+        done();
+    }
+}
+
+main: () -> int =
+{
+    forks: std::vector = std::vector<Fork>(numPhilisophers);
+
+    threads: std::vector<std::thread> = (numPhilisophers);
+
+    (copy i := 0)
+    while i < numPhilisophers next i++ {
+        philosopher: Philosopher;
+
+        if i != numPhilisophers - 1 {
+            philosopher = Philosopher(i, forks[i]&, forks[i + 1]&);
+        } else {
+            philosopher = Philosopher(i, forks[0]&, forks[i]&);
+        }
+        
+        threads[i] = std::thread(
+            std::bind(Philosopher::run&, philosopher)
+        );
+    }
+
+    for threads do (inout thread){
+        thread.join();
+    }
+
+
+    return 0;
+}

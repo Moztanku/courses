@@ -17,8 +17,8 @@ type Fork struct {
 }
 
 type Philisopher struct {
-	id          int
-	left, right *Fork
+	id            int
+	lower, higher *Fork
 }
 
 func (p *Philisopher) eat() {
@@ -42,15 +42,15 @@ func (p *Philisopher) done(wg *sync.WaitGroup) {
 
 func (p *Philisopher) task(wg *sync.WaitGroup) {
 	for i := 0; i < hunger; i++ {
-		p.left.Lock()
-		p.right.Lock()
-
 		p.think()
 
-		p.right.Unlock()
-		p.left.Unlock()
+		p.lower.Lock()
+		p.higher.Lock()
 
 		p.eat()
+
+		p.higher.Unlock()
+		p.lower.Unlock()
 	}
 
 	p.done(wg)
@@ -65,10 +65,19 @@ func main() {
 
 	philisophers := make([]*Philisopher, numPhilisophers)
 	for i := 0; i < numPhilisophers; i++ {
-		philisophers[i] = &Philisopher{
-			id:    i,
-			left:  forks[i],
-			right: forks[(i+1)%numPhilisophers],
+
+		if i != numPhilisophers-1 {
+			philisophers[i] = &Philisopher{
+				id:     i,
+				lower:  forks[i],
+				higher: forks[i+1],
+			}
+		} else {
+			philisophers[i] = &Philisopher{
+				id:     i,
+				lower:  forks[0],
+				higher: forks[i],
+			}
 		}
 	}
 

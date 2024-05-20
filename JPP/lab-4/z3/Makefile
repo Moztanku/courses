@@ -4,10 +4,10 @@ C = clang
 CFLAGS = -std=c17 -O3
 
 CC = clang++
-CXXFLAGS = -std=c++23 -O3 -I inc
+CXXFLAGS = -std=c++20 -O3 -I inc
 
 CC2 = cppfront
-CXX2FLAGS = -pure-cpp2 -output stdout
+CXX2FLAGS = -import-std -output stdout
 
 RS = rustc
 RSFLAGS = -O
@@ -19,7 +19,7 @@ HS = ghc
 HSFLAGS = -O3
 
 AD = gnatmake
-ADFLAGS = -gnatX0 -O3
+ADFLAGS = -gnatwa -gnatX0 -O3 -I../../inc
 
 SRC_DIR = src
 BIN_DIR = bin
@@ -57,7 +57,10 @@ $(BIN_DIR)/%: $(SRC_DIR)/%.cpp inc/*.hpp
 
 $(BIN_DIR)/%: $(SRC_DIR)/%.cpp2
 		$(info Compiling C++2: $< -> $@)
-		@$(CC2) $(CXX2FLAGS) $< 2> /dev/null 1| $(CC) $(CXXFLAGS) -o $@ -x c++ -
+		-@$(CC2) $(CXX2FLAGS) $< 2> $@.output 1> $@.cpp || cat $@.output
+		-@rm $@.output
+		@$(CC) $(CXXFLAGS) $@.cpp -o $@
+		-@rm $@.cpp
 
 $(BIN_DIR)/%: $(SRC_DIR)/%.rs
 		$(info Compiling Rust: $< -> $@)
@@ -72,7 +75,7 @@ $(BIN_DIR)/%: $(SRC_DIR)/%.hs
 		@$(HS) $(HSFLAGS) $< -o $@
 
 TEMP_DIR = $(BIN_DIR)/temp_adabuild
-$(BIN_DIR)/%: $(SRC_DIR)/%.adb
+$(BIN_DIR)/%: $(SRC_DIR)/%.adb inc/*.ads inc/*.adb
 		$(info Compiling Ada: $< -> $@)
 		@mkdir -p $(TEMP_DIR)
 		@cd $(TEMP_DIR) && $(AD) $(ADFLAGS) ../../$< -o ../../$@
