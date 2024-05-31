@@ -2,7 +2,7 @@
 
 import random
 
-from util import RC4, to_hex
+from util import RC4, to_hex_pp
 
 # Bank account number: CC XXXX XXXX YYYY YYYY YYYY YYYY
 #
@@ -16,6 +16,25 @@ from util import RC4, to_hex
 # Santander Bank Polska: 1090
 # mBank: 1140
 
+# 48-57
+# 0011  0000 48 : 0
+# 0011  0001 49 : 1
+# 0011  0010 50 : 2
+# 0011  0011 51 : 3
+# 0011  0100 52 : 4
+# 0011  0101 53 : 5
+# 0011  0110 54 : 6
+# 0011  0111 55 : 7
+# 0011  1000 56 : 8
+# 0011  1001 57 : 9
+# 0000  XXXX
+# ABCD
+# A = 1 -> 8,9              |   2/10
+# B = 1 -> 4,5,6,7          |   4/10
+# C = 1 -> 2,3,6,7          |   4/10
+# D = 1 -> 1,3,5,7,9        |   5/10
+#
+
 def get_random_account_number():
     bank_numbers: list[str] = ["1020", "1030", "1050", "1090", "1140"]
 
@@ -28,9 +47,6 @@ def get_random_account_number():
 
 # Checksum calculation:
 def calculate_checksum(account_number):
-    # Replace letters with digits
-    account_number = ''.join(str(ord(c) - 55) if c.isalpha() else c for c in account_number)
-    
     # Move the four initial characters to the end of the string
     account_number = account_number[4:] + account_number[:4]
     
@@ -47,15 +63,49 @@ def format_acc_number(account_number: str) -> str:
 
 def main():
     key: str = "Secret"
+    num: int = 20
 
-    account_nbrs: list[str] = [get_random_account_number() for _ in range(10)]
+    account_nbrs: list[str] = [get_random_account_number() for _ in range(num)]
     encoded: list[str] = [RC4(key, acc) for acc in account_nbrs]
-    decoded: list[str] = [RC4(key, enc) for enc in encoded]
+    # decoded: list[str] = [RC4(key, enc) for enc in encoded]
 
-    for i in range(10):
-        print(f"Account: {format_acc_number(account_nbrs[i])}")
-        print(f"Encoded: {to_hex(encoded[i])}")
-        print(f"Decoded: {format_acc_number(decoded[i])}\n")
+    for cip in encoded:
+        cip2: str = ""
+
+        for c in cip:
+            cip2 += chr((ord(c) & 63) % 0x10)
+
+        print(to_hex_pp(cip2))
+    print()
+    
+    for i in range(num):
+        for j in range(i + 1, num):
+            cipa: str = encoded[i]
+            cipb: str = encoded[j]
+
+            xor: str = "".join([chr(ord(a) ^ ord(b)) for a, b in zip(cipa, cipb)])
+
+            print(to_hex_pp(xor))
+
+    # cip: str = encoded[0]
+
+    # print(to_hex_pp(account_nbrs[0]))
+    # print(to_hex_pp(cip))
+
+    # for i in range(1, num):
+    #     xor: str = "".join([chr(ord(a) ^ ord(b)) for a, b in zip(cip, encoded[i])])
+    #     print(to_hex_pp(xor))
 
 if __name__ == "__main__":
     main()
+
+#
+#   C1 = K ^ M1
+#   C2 = K ^ M2
+#   C3 = K ^ M3
+#
+#   C1 ^ C2 = (K ^ M1) ^ (K ^ M2) = M1 ^ M2
+#   C2 ^ C3 = M2 ^ M3
+#   (M1 ^ M2) 
+#
+#

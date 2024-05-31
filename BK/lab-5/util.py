@@ -29,3 +29,13 @@ def to_hex(text: str) -> str:
         out += format(ord(c), '02X')
 
     return out
+
+
+def to_hex_pp(text: str) -> str:
+    out: str = ""
+
+    for c in text:
+        out += format(ord(c), '02X')
+        out += " "
+
+    return out
