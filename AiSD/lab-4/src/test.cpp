@@ -9,10 +9,14 @@ auto main() -> int
 {
     std::unique_ptr<ITree> tree = std::make_unique<BSTree>();
 
-    std::vector<int> keys = {5, 4, 3, 5, 7, 10, 11};
+    std::vector<int> keys = {50, 30, 70, 20, 40, 60, 65, 80};
 
-    for (auto key : keys) {
+    for (auto key : keys)
         tree->insert(key);
-        std::cout << std::format("Inserted key: {}, Tree height: {}\n", key, tree->height());
-    }
+
+    tree->print();
+    tree->remove(50);
+
+    std::cout << "\n\n";
+    tree->print();
 }
