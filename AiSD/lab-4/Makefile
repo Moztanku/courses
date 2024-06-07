@@ -1,7 +1,7 @@
 # My makefile for compiling single source C, C++, C++2, Go and Haskell programs
 
 C = clang
-CFLAGS = -std=c17 -O3
+CFLAGS = -std=gnu17 -O3 -I inc
 
 CC = clang++
 CXXFLAGS = -std=c++20 -O3 -I inc
@@ -40,7 +40,7 @@ $(BIN_DIR):
 	$(info Creating directory: $@)
 	@mkdir -p $(BIN_DIR)
 
-$(BIN_DIR)/%: $(SRC_DIR)/%.c
+$(BIN_DIR)/%: $(SRC_DIR)/%.c inc/*.h
 	$(info Compiling C: $< -> $@)
 	@$(C) $(CFLAGS) $< -o $@
 

@@ -1,149 +1,214 @@
 #pragma once
 
+#include <stack>
 #include <memory>
+#include <iostream>
 
 #include "ITree.hpp"
 
-class BSTree : public ITree 
+class BSTree : public ITree
 {
     public:
-        BSTree() = default;
-
-        auto insert(int key) -> void override;
-        auto remove(int key) -> void override;
-
-        auto height() const -> int override;
-        auto print() const -> void override;
-    private:
-        struct Node;
-        using NodePtr = std::shared_ptr<Node>;
-
-        struct Node {
-            int key;
-            NodePtr l;
-            NodePtr r;
-            NodePtr p;
+        struct Node
+        {
+            int value;
+            std::shared_ptr<Node> left, right, parent;
         };
 
-        NodePtr m_root{nullptr};
+        BSTree(int root_value)
+            : root{std::make_shared<Node>()} { root->value = root_value; }
 
-        auto insert(NodePtr& parr, int key) -> void;
-        auto remove(NodePtr& parr, int key) -> void;
+        auto insert(int value) -> void override;
+        auto remove(int value) -> void override;
 
-        auto height(const NodePtr parr) const -> int;
-        auto print(const NodePtr parr, int depth) const -> void;
+        auto height() const -> int override;
+        auto size() const -> int override;
+
+        auto print() const -> void override;
+
+    private:
+        std::shared_ptr<Node> root;
 };
 
-auto BSTree::insert(NodePtr& parr, int key) -> void
+auto BSTree::insert(int value) -> void
 {
-    if (key <= parr->key) {
-        if (parr->l == nullptr) {
-            parr->l = std::make_shared<Node>(Node{.key = key, .p = parr});
-            return;
-        } else {
-            insert(parr->l, key);
+    auto node = root;
+    while (node)
+    {
+        if (value <= node->value)
+        {
+            if (node->left)
+            {
+                node = node->left;
+            }
+            else
+            {
+                node->left = std::make_shared<Node>();
+                node->left->value = value;
+                node->left->parent = node;
+                break;
+            }
         }
-    } else {
-        if (parr->r == nullptr) {
-            parr->r = std::make_shared<Node>(Node{.key = key, .p = parr});
-            return;
-        } else {
-            insert(parr->r, key);
+        else
+        {
+            if (node->right)
+            {
+                node = node->right;
+            }
+            else
+            {
+                node->right = std::make_shared<Node>();
+                node->right->value = value;
+                node->right->parent = node;
+                break;
+            }
         }
     }
 }
 
-auto BSTree::insert(int key) -> void
+auto BSTree::remove(int value) -> void
 {
-    if (m_root == nullptr)
-    {
-        m_root = std::make_shared<Node>(Node{.key = key});
+    auto node = root;
+
+    // Find the node to remove
+    while (node && node->value != value)
+        if (value < node->value)
+            node = node->left;
+        else
+            node = node->right;
+
+    // Return if the node was not found
+    if (!node)
         return;
+
+    auto left = node->left;
+    auto right = node->right;
+
+    // Case 1: Node has no children
+    if (!left && !right)
+    {
+        if (node->parent->left == node)
+            node->parent->left = nullptr;
+        else
+            node->parent->right = nullptr;
     }
 
-    insert(m_root, key);
-}
-
-auto BSTree::remove(int key) -> void
-{
-    remove(m_root, key);
-}
-
-auto BSTree::remove(NodePtr& parr, int key) -> void
-{
-    if (parr == nullptr)
-        return;
-
-    if (key < parr->key)
-        return remove(parr->l, key);
-
-    if (key > parr->key)
-        return remove(parr->r, key);
-
-    // Case 1: No child
-    if (parr->l == nullptr && parr->r == nullptr)
+    // Case 2: Node has one child
+    else if (!left || !right)
     {
-        parr = nullptr;
-        return;
+        if (node->parent->left == node)
+            node->parent->left = left ? left : right;
+        else
+            node->parent->right = left ? left : right;
     }
 
-    // Case 2: One child
-    if (parr->l == nullptr)
-    {
-        parr = parr->r;
-        return;
-    }
-
-    if (parr->r == nullptr)
-    {
-        parr = parr->l;
-        return;
-    }
-
-    // Case 3: Two children
-    NodePtr min = parr->r;
-
-    while (min->l != nullptr)
-        min = min->l;
-
-    parr->key = min->key;
-
-    if (parr->r == min)
-        parr->r = min->r;
+    // Case 3: Node has two children
     else
-        min->p->l = min->r;
+    {
+        auto next = right;
+
+        // We find the successor of the node
+        while (next->left)
+            next = next->left;
+
+        // We replace the node with the successor
+        node->value = next->value;
+
+        // We remove the successor
+        if (next->parent->left == next)
+            next->parent->left = nullptr;
+        else
+            next->parent->right = nullptr;
+    }
 }
 
 auto BSTree::height() const -> int
 {
-    return height(m_root);
+    std::stack<std::shared_ptr<Node>> stack;
+    stack.push(root);
+
+    int height = 0;
+    int max_height = 0;
+
+    while (!stack.empty())
+    {
+        auto node = stack.top();
+        stack.pop();
+
+        if (node->left)
+            stack.push(node->left);
+
+        if (node->right)
+            stack.push(node->right);
+
+        if (!node->left && !node->right)
+        {
+            height = 0;
+            auto parent = node->parent;
+
+            while (parent)
+            {
+                height++;
+                parent = parent->parent;
+            }
+
+            if (height > max_height)
+                max_height = height;
+        }
+    }
+
+    return max_height + 1;
 }
 
-auto BSTree::height(const NodePtr parr) const -> int
+auto BSTree::size() const -> int
 {
-    if (parr == nullptr)
-        return 0;
+    std::stack<std::shared_ptr<Node>> stack;
+    stack.push(root);
 
-    return 1 + std::max(height(parr->l), height(parr->r));
+    int size = 0;
+
+    while (!stack.empty())
+    {
+        auto node = stack.top();
+        stack.pop();
+
+        size++;
+
+        if (node->left)
+            stack.push(node->left);
+
+        if (node->right)
+            stack.push(node->right);
+    }
+
+    return size;
+}
+
+auto BSTreePrint(const std::shared_ptr<BSTree::Node> node, std::string indent, bool right) -> void
+{
+    if (!node)
+        return;
+
+    std::cout << indent;
+
+    if (right)
+    {
+        std::cout << "└────";
+        indent += "     ";
+    }
+    else
+    {
+        std::cout << "├────";
+        indent += "│    ";
+    }
+
+    std::cout << node->value << std::endl;
+
+    BSTreePrint(node->left, indent, node->right == nullptr);
+    BSTreePrint(node->right, indent, true);
 }
 
 auto BSTree::print() const -> void
 {
-    print(m_root, 0);
-}
-
-auto BSTree::print(const NodePtr parr, int depth) const -> void
-{
-    if (parr == nullptr)
-        return;
-
-    print(parr->r, depth + 1);
-
-    constexpr std::string_view space = "  ";
-
-    for (int i = 0; i < depth; ++i)
-        std::cout << space;
-    std::cout << "-[" << parr->key << "]\n";
-
-    print(parr->l, depth + 1);
+    BSTreePrint(root, "", true);
 }
