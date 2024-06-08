@@ -35,7 +35,7 @@ auto BSTree::insert(int value) -> void
     auto node = root;
     while (node)
     {
-        if (value <= node->value)
+        if (value < node->value)
         {
             if (node->left)
             {

@@ -24,14 +24,17 @@ auto generate_random_values(std::span<int> arr) -> void
 
 auto main() -> int
 {
-    std::unique_ptr<ITree> tree = std::make_unique<RBTree>(500000);
+    std::unique_ptr<ITree> tree = std::make_unique<RBTree>(5);
 
-    std::vector<int> values(40);
-    generate_random_values(values);
+    std::vector<int> values = {1, 2, 3, 4, 6, 7, 8, 9, 10};
+    // generate_random_values(values);
 
     for (auto value : values)
         tree->insert(value);
 
+    tree->print();
+
+    // tree->remove(1);
     for (auto i = 0; i < values.size(); i += 2)
         tree->remove(values[i]);
 

@@ -17,11 +17,7 @@ class RBTree : public ITree
             std::shared_ptr<Node> left, right, parent;
         };
 
-        RBTree(int root_value)
-            : root{std::make_shared<Node>()} {
-                root->value = root_value;
-                root->is_black = true;
-            }
+        RBTree(int root_value);
 
         auto insert(int value) -> void override;
         auto remove(int value) -> void override;
@@ -36,18 +32,31 @@ class RBTree : public ITree
 };
 
 using Node = RBTree::Node;
+const std::shared_ptr<Node> nil = 
+    std::make_shared<Node>(Node{0, true, nullptr, nullptr, nullptr});
+
+
+RBTree::RBTree(int root_value) : root{std::make_shared<Node>()}
+{
+    root->value = root_value;
+    root->is_black = true;
+    root->left = nil;
+    root->right = nil;
+    root->parent = nil;
+}
+
 auto rotateLeft(std::shared_ptr<Node>& root, std::shared_ptr<Node> &x) -> void
 {
     std::shared_ptr<Node> y = x->right;
 
     x->right = y->left;
 
-    if (y->left != nullptr)
+    if (y->left != nil)
         y->left->parent = x;
 
     y->parent = x->parent;
 
-    if (x->parent == nullptr)
+    if (x->parent == nil)
         root = y;
     else if (x == x->parent->left)
         x->parent->left = y;
@@ -64,12 +73,12 @@ auto rotateRight(std::shared_ptr<Node> &root, std::shared_ptr<Node> &x) -> void
 
     x->left = y->right;
 
-    if (y->right != nullptr)
+    if (y->right != nil)
         y->right->parent = x;
 
     y->parent = x->parent;
 
-    if (x->parent == nullptr)
+    if (x->parent == nil)
         root = y;
     else if (x == x->parent->left)
         x->parent->left = y;
@@ -93,7 +102,7 @@ auto fixInsert(std::shared_ptr<Node>& root, std::shared_ptr<Node>& x) -> void
         if (p == gp->left) {
             std::shared_ptr<Node> uncle = gp->right;
 
-            if (uncle != nullptr && !uncle->is_black) {
+            if (uncle != nil && !uncle->is_black) {
                 gp->is_black = false;
                 p->is_black = true;
                 uncle->is_black = true;
@@ -113,7 +122,7 @@ auto fixInsert(std::shared_ptr<Node>& root, std::shared_ptr<Node>& x) -> void
         } else {
             std::shared_ptr<Node> uncle = gp->left;
 
-            if ((uncle != nullptr) && (!uncle->is_black)) {
+            if ((uncle != nil) && (!uncle->is_black)) {
                 gp->is_black = false;
                 p->is_black = true;
                 uncle->is_black = true;
@@ -140,9 +149,9 @@ auto RBTree::insert(int value) -> void
     auto node = root;
     while (node)
     {
-        if (value <= node->value)
+        if (value < node->value)
         {
-            if (node->left)
+            if (node->left != nil)
             {
                 node = node->left;
             }
@@ -157,7 +166,7 @@ auto RBTree::insert(int value) -> void
         }
         else
         {
-            if (node->right)
+            if (node->right != nil)
             {
                 node = node->right;
             }
@@ -175,6 +184,8 @@ auto RBTree::insert(int value) -> void
 
     node->value = value;
     node->is_black = false;
+    node->left = nil;
+    node->right = nil;
 
     fixInsert(root, node);
 }
@@ -183,7 +194,7 @@ auto find(const std::shared_ptr<Node> root, int value) -> std::shared_ptr<Node>
 {
     auto node = root;
 
-    while (node)
+    while (node != nil)
     {
         if (value == node->value)
             return node;
@@ -199,11 +210,11 @@ auto find(const std::shared_ptr<Node> root, int value) -> std::shared_ptr<Node>
 
 auto treeSuccessor(std::shared_ptr<Node> x) -> std::shared_ptr<Node>
 {
-    if (x->right)
+    if (x->right != nil)
     {
         x = x->right;
 
-        while (x->left)
+        while (x->left != nil)
             x = x->left;
 
         return x;
@@ -211,7 +222,7 @@ auto treeSuccessor(std::shared_ptr<Node> x) -> std::shared_ptr<Node>
 
     auto y = x->parent;
 
-    while (y && x == y->right)
+    while (y != nil && x == y->right)
     {
         x = y;
         y = y->parent;
@@ -222,10 +233,6 @@ auto treeSuccessor(std::shared_ptr<Node> x) -> std::shared_ptr<Node>
 
 auto fixRemove(std::shared_ptr<Node>& root, std::shared_ptr<Node>& x) -> void
 {
-    if (x == nullptr)
-        return;
-
-
     while (x != root && x->is_black == true)
     {
         if (x == x->parent->left)
@@ -273,7 +280,7 @@ auto fixRemove(std::shared_ptr<Node>& root, std::shared_ptr<Node>& x) -> void
                 w = x->parent->left;
             }
 
-            if (w->right && w->right->is_black == true && w->left && w->left->is_black == true)
+            if (w->right->is_black == true && w->left->is_black == true)
             {
                 w->is_black = false;
                 x = x->parent;
@@ -301,31 +308,30 @@ auto fixRemove(std::shared_ptr<Node>& root, std::shared_ptr<Node>& x) -> void
     x->is_black = true;
 }
 
-
 auto RBTree::remove(int value) -> void
 {
     auto z = find(root, value);
 
     std::shared_ptr<Node> x, y;
 
-    if (!z)
+    if (z == nullptr)
         return;
 
-    if (z->left == nullptr || z->right == nullptr){
+    if (z->left == nil || z->right == nil){
         y = z;
     }
     else{
-        y = treeSuccessor(z);}
+        y = treeSuccessor(z);
+    }
 
-    if (y->left != nullptr){
+    if (y->left != nil){
         x = y->left;}
     else{
-        x = y->right;}
+        x = y->right;}  // x = nil
 
-    if (x){
-        x->parent = y->parent;}
+    x->parent = y->parent;
 
-    if (y->parent == nullptr){
+    if (y->parent == nil){
         root = x;}
     else if (y == y->parent->left){
         y->parent->left = x;}
@@ -353,18 +359,18 @@ auto RBTree::height() const -> int
         auto node = stack.top();
         stack.pop();
 
-        if (node->left)
+        if (node->left != nil)
             stack.push(node->left);
 
-        if (node->right)
+        if (node->right != nil)
             stack.push(node->right);
 
-        if (!node->left && !node->right)
+        if (node->left == nil && node->right == nil)
         {
             height = 0;
             auto parent = node->parent;
 
-            while (parent)
+            while (parent != nil)
             {
                 height++;
                 parent = parent->parent;
@@ -392,10 +398,10 @@ auto RBTree::size() const -> int
 
         size++;
 
-        if (node->left)
+        if (node->left != nil)
             stack.push(node->left);
 
-        if (node->right)
+        if (node->right != nil)
             stack.push(node->right);
     }
 
@@ -404,7 +410,7 @@ auto RBTree::size() const -> int
 
 auto RBTreePrint(const std::shared_ptr<Node> node, std::string indent, bool right) -> void
 {
-    if (!node)
+    if (node == nil || !node)
         return;
 
     std::cout << indent;
@@ -425,7 +431,7 @@ auto RBTreePrint(const std::shared_ptr<Node> node, std::string indent, bool righ
 
     std::cout << color << node->value << reset << std::endl;
 
-    RBTreePrint(node->left, indent, node->right == nullptr);
+    RBTreePrint(node->left, indent, node->right == nil);
     RBTreePrint(node->right, indent, true);
 }
 
