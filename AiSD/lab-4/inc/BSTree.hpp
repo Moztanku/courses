@@ -6,20 +6,19 @@
 
 #include "ITree.hpp"
 
+#include "NodePtr.hpp"
+
 class BSTree : public ITree
 {
     public:
         struct Node
         {
-            int value;
-            std::shared_ptr<Node> left, right, parent;
+            Key value;
+            NodePtr<Node> left, right, parent;
         };
 
-        BSTree(int root_value)
-            : root{std::make_shared<Node>()} { root->value = root_value; }
-
-        auto insert(int value) -> void override;
-        auto remove(int value) -> void override;
+        auto insert(Key value) -> void override;
+        auto remove(Key value) -> void override;
 
         auto height() const -> int override;
         auto size() const -> int override;
@@ -27,11 +26,18 @@ class BSTree : public ITree
         auto print() const -> void override;
 
     private:
-        std::shared_ptr<Node> root;
+        NodePtr<Node> root{nullptr};
 };
 
-auto BSTree::insert(int value) -> void
+auto BSTree::insert(Key value) -> void
 {
+    if (!root)
+    {
+        root = std::make_shared<Node>();
+        root->value = value;
+        return;
+    }
+
     auto node = root;
     while (node)
     {
@@ -66,16 +72,18 @@ auto BSTree::insert(int value) -> void
     }
 }
 
-auto BSTree::remove(int value) -> void
+auto BSTree::remove(Key value) -> void
 {
     auto node = root;
 
     // Find the node to remove
     while (node && node->value != value)
+    {
         if (value < node->value)
             node = node->left;
         else
             node = node->right;
+    }
 
     // Return if the node was not found
     if (!node)
@@ -87,6 +95,12 @@ auto BSTree::remove(int value) -> void
     // Case 1: Node has no children
     if (!left && !right)
     {
+        if (node == root)
+        {
+            root = nullptr;
+            return;
+        }
+
         if (node->parent->left == node)
             node->parent->left = nullptr;
         else
@@ -94,12 +108,21 @@ auto BSTree::remove(int value) -> void
     }
 
     // Case 2: Node has one child
-    else if (!left || !right)
+    else if ((!left && right) || (left && !right))
     {
-        if (node->parent->left == node)
-            node->parent->left = left ? left : right;
-        else
-            node->parent->right = left ? left : right;
+        auto child = left ? left : right;
+        if (node == root)
+        {
+            root = child;
+            child->parent = nullptr; // Add this line
+            return;
+        }
+
+        if (node->parent->left == node){
+            node->parent->left = child;}
+        else{
+            node->parent->right = child;}
+        child->parent = node->parent; // Add this line
     }
 
     // Case 3: Node has two children
@@ -122,69 +145,33 @@ auto BSTree::remove(int value) -> void
     }
 }
 
+auto BSTHeight(const NodePtr<BSTree::Node> node) -> int
+{
+    if (!node)
+        return 0;
+
+    return 1 + std::max(BSTHeight(node->left), BSTHeight(node->right));
+}
+
 auto BSTree::height() const -> int
 {
-    std::stack<std::shared_ptr<Node>> stack;
-    stack.push(root);
+    return BSTHeight(root);
+}
 
-    int height = 0;
-    int max_height = 0;
+auto BSTSize(const NodePtr<BSTree::Node> node) -> int
+{
+    if (!node)
+        return 0;
 
-    while (!stack.empty())
-    {
-        auto node = stack.top();
-        stack.pop();
-
-        if (node->left)
-            stack.push(node->left);
-
-        if (node->right)
-            stack.push(node->right);
-
-        if (!node->left && !node->right)
-        {
-            height = 0;
-            auto parent = node->parent;
-
-            while (parent)
-            {
-                height++;
-                parent = parent->parent;
-            }
-
-            if (height > max_height)
-                max_height = height;
-        }
-    }
-
-    return max_height + 1;
+    return 1 + BSTSize(node->left) + BSTSize(node->right);
 }
 
 auto BSTree::size() const -> int
 {
-    std::stack<std::shared_ptr<Node>> stack;
-    stack.push(root);
-
-    int size = 0;
-
-    while (!stack.empty())
-    {
-        auto node = stack.top();
-        stack.pop();
-
-        size++;
-
-        if (node->left)
-            stack.push(node->left);
-
-        if (node->right)
-            stack.push(node->right);
-    }
-
-    return size;
+    return BSTSize(root);
 }
 
-auto BSTreePrint(const std::shared_ptr<BSTree::Node> node, std::string indent, bool right) -> void
+auto BSTreePrint(const NodePtr<BSTree::Node> node, std::string indent, bool right) -> void
 {
     if (!node)
         return;
@@ -193,13 +180,13 @@ auto BSTreePrint(const std::shared_ptr<BSTree::Node> node, std::string indent, b
 
     if (right)
     {
-        std::cout << "└────";
-        indent += "     ";
+        std::cout << "└──";
+        indent += "   ";
     }
     else
     {
-        std::cout << "├────";
-        indent += "│    ";
+        std::cout << "├──";
+        indent += "│  ";
     }
 
     std::cout << node->value << std::endl;
