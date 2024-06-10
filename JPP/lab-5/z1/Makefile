@@ -1,10 +1,14 @@
 # My makefile for compiling single source C, C++, C++2, Go and Haskell programs
 
+SRC_DIR = src
+INC_DIR = inc
+BIN_DIR = bin
+
 C = clang
 CFLAGS = -std=c17 -O3
 
 CC = clang++
-CXXFLAGS = -std=c++20 -O3 -I inc
+CXXFLAGS = -std=c++20 -O3 -I $(INC_DIR)
 
 CC2 = cppfront
 CXX2FLAGS = -import-std -output stdout
@@ -16,13 +20,10 @@ GO = go
 GOFLAGS = build
 
 HS = ghc
-HSFLAGS = -O3 -dynamic
+HSFLAGS = -O3 -dynamic -i$(INC_DIR)
 
 AD = gnatmake
-ADFLAGS = -gnatwa -gnatX0 -O3 -I../../inc
-
-SRC_DIR = src
-BIN_DIR = bin
+ADFLAGS = -gnatwa -gnatX0 -O3 -I../../$(INC_DIR)
 
 SOURCES := \
 		$(wildcard $(SRC_DIR)/*.c)\
@@ -70,10 +71,11 @@ $(BIN_DIR)/%: $(SRC_DIR)/%.go
 		$(info Compiling Go: $< -> $@)
 		@$(GO) $(GOFLAGS) -o $@ $<
 
-$(BIN_DIR)/%: $(SRC_DIR)/%.hs
+$(BIN_DIR)/%: $(SRC_DIR)/%.hs inc/*.hs
 		$(info Compiling Haskell: $< -> $@)
 		@$(HS) $(HSFLAGS) $< -o $@
 		@rm -f $(SRC_DIR)/*.hi $(SRC_DIR)/*.o
+		@rm -f $(INC_DIR)/*.hi $(INC_DIR)/*.o
 
 TEMP_DIR = $(BIN_DIR)/temp_adabuild
 $(BIN_DIR)/%: $(SRC_DIR)/%.adb inc/*.ads inc/*.adb
