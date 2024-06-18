@@ -11,7 +11,7 @@ auto main() -> int
 {
     constexpr uint N_min  =   100;
     constexpr uint N_step =   100;
-    constexpr uint N_max  = 5000;
+    constexpr uint N_max  = 10000;
 
     constexpr uint K = 10;
 
