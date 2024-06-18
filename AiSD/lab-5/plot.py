@@ -1,7 +1,8 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import sys
 import matplotlib.pyplot as plt
+import math
 
 def print_help(exec: str, status: int):
     print(f"Usage: {exec} <results-path> <output-path>")
@@ -34,12 +35,18 @@ def main():
     plt.plot(list(prim_results.keys()), list(prim_results.values()), label="Prim")
     plt.plot(list(kruskal_results.keys()), list(kruskal_results.values()), label="Kruskal")
 
+    # prim_log = [y / (x * math.log(x)) for x, y in prim_results.items()]
+    # kruskal_log = [y / (x * math.log(x)) for x, y in kruskal_results.items()]
+
+    # plt.plot(list(prim_results.keys()), prim_log, label="Prim")
+    # plt.plot(list(kruskal_results.keys()), kruskal_log, label="Kruskal")
+
     plt.xlabel("Number of vertices")
     plt.ylabel("Time (ms)")
 
     plt.legend()
-    plt.savefig(output_path)
-    # plt.show()
+    # plt.savefig(output_path)
+    plt.show()
 
 if __name__ == "__main__":
     main()
