@@ -35,7 +35,6 @@ auto kruskal(const Graph& graph) -> Graph
         return a.weight < b.weight;
     });
 
-    // Create a vector to store the parent of each node
     std::vector<size_t> parent(graph.size());
     std::iota(parent.begin(), parent.end(), 0);
 
@@ -49,7 +48,6 @@ auto kruskal(const Graph& graph) -> Graph
         return parent[i] = find(parent[i]);
     };
 
-    // Function to union two nodes
     auto union_nodes = [&parent, &find](size_t i, size_t j)
     {
         parent[find(i)] = find(j);

@@ -1,59 +1,49 @@
 #include <iostream>
+#include<format>
+#include <string_view>
 
-#include <map>
-#include <chrono>
-
-#include "Kruskal.hpp"
 #include "Graph.hpp"
+#include "Kruskal.hpp"
 #include "Prim.hpp"
+#include "Tree.hpp"
 
-auto main() -> int
+auto print_help(const std::string_view exec, int status) -> void
 {
-    constexpr uint N_min  =   100;
-    constexpr uint N_step =   100;
-    constexpr uint N_max  = 10000;
+    std::cout << std::format("Usage: {} <Kruskal/Prim> <N>\n", exec);
 
-    constexpr uint K = 10;
+    std::exit(status);
+}
 
-    std::map<uint, double> prim_times;
-    std::map<uint, double> kruskal_times;
+auto main(int argc, char** argv) -> int
+{
+    if (argc == 2 && (argv[1] == std::string_view("-h") || argv[1] == std::string_view("--help")))
+        print_help(argv[0], 0);
 
-    auto start = std::chrono::high_resolution_clock::now();
-    auto end = std::chrono::high_resolution_clock::now();
+    if (argc != 3)
+        print_help(argv[0], 1);
 
-    for (uint N = N_min; N <= N_max; N += N_step)
-    {
-        std::clog << "Running for N = " << N << std::endl;
+    std::string_view alg_name = argv[1];
 
-        prim_times[N] = 0.0;
-        kruskal_times[N] = 0.0;
+    auto algorithm = 
+        alg_name == "Kruskal" ? kruskal :
+        alg_name == "Prim"    ? prim    :
+        nullptr;
 
-        for (uint _ = 0; _ < K; _++)
-        {
-            Graph full_graph(N);
+    if (algorithm == nullptr)
+        print_help(argv[0], 1);
 
-            start = std::chrono::high_resolution_clock::now();
-            Graph mst_prim = prim(full_graph);
-            end = std::chrono::high_resolution_clock::now();
+    auto N = std::stoi(argv[2]);
 
-            prim_times[N] += std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+    if (!(N > 0))
+        print_help(argv[0], 1);
 
-            start = std::chrono::high_resolution_clock::now();
-            Graph mst_kruskal = kruskal(full_graph);
-            end = std::chrono::high_resolution_clock::now();
+    Graph full_graph(N);
 
-            kruskal_times[N] += std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-        }
+    Graph mst = algorithm(full_graph);
 
-        prim_times[N] /= K;
-        kruskal_times[N] /= K;
-    }
+    Tree tree(mst);
 
-    std::cout << "#N\t\tPrim\t\tKruskal" << std::endl;
-    for (uint N = N_min; N <= N_max; N += N_step)
-    {
-        std::cout << N << "\t\t" << prim_times[N] / 1000.0 << "\t\t" << kruskal_times[N] / 1000.0 << std::endl;
-    }
+    tree.print();
 
     return 0;
 }

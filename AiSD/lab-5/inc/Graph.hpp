@@ -4,7 +4,7 @@
 #include <random>
 #include <optional>
 
-#define FAST_RANDOM true
+#define FAST_RANDOM false
 
 constexpr double INF = std::numeric_limits<double>::infinity();
 
@@ -14,7 +14,13 @@ class Graph
         Graph(const size_t size, const std::optional<double> initial = std::nullopt) : m_size{size}
         {
             #if FAST_RANDOM
-                srand(time(nullptr));
+                static bool seeded = false;
+
+                if (!seeded)
+                {
+                    srand(time(nullptr));
+                    seeded = true;
+                }
             #endif
             
             m_adjMat.resize(m_size);
