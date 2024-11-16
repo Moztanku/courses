@@ -44,8 +44,10 @@ dchar_seq [^()\\[:space:]]{0,16}
     }
 
     /* filtering out Doxygen comments */
-    "///".*\n   { if (keep_doxygen) ECHO; }
-    "//!".*\n   { if (keep_doxygen) ECHO; }
+    ^"///".*\n { if (keep_doxygen) ECHO; }  /* full-line comments */
+    ^"//!".*\n { if (keep_doxygen) ECHO; }
+    "///".*$   { if (keep_doxygen) ECHO; }  /* inline comments */
+    "//!".*$   { if (keep_doxygen) ECHO; }
 
     "/**"|"/*!" {
         if (keep_doxygen) {

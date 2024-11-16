@@ -115,7 +115,7 @@ int main() {
     R"abc(12)"3 // still not a comment
     )abc";
 
-    auto R = R"( \\ raw string literal )";
+    auto R = R"( \\ raw string literal )"; /// doxygen comment
     auto L = L" \\ wide string literal ";
     auto LR = LR"( \\ raw wide string literal )";
 
