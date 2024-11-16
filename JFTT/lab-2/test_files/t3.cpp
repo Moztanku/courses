@@ -115,9 +115,9 @@ int main() {
     R"abc(12)"3 // still not a comment
     )abc";
 
-    auto R = R"( \\ raw string literal )"; /// doxygen comment
-    auto L = L" \\ wide string literal ";
-    auto LR = LR"( \\ raw wide string literal )";
+    auto R = R"( // raw string literal )"; /// doxygen comment
+    auto L = L" // wide string literal ";
+    auto LR = LR"( // raw wide string literal )";
 
     std::cout << "// this is not a comment as well" << std::endl; // this is a comment
     /*

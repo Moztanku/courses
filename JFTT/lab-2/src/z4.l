@@ -100,7 +100,7 @@ ipow(int base, int exp)
 
 %option noyywrap
 
-NUMBER [-]?[1-9][0-9]*
+NUMBER [0]|[-]?[1-9][0-9]*
 OPERATOR [-+*/^%]
 
 %%
@@ -135,12 +135,30 @@ OPERATOR [-+*/^%]
             stack->push(a * b);
             break;
         case '/':
+            if (b == 0)
+            {
+                fprintf(stderr, "Error: division by zero\n");
+                yyterminate();
+            }
+
             stack->push(a / b);
             break;
         case '^':
+            if (b < 0)
+            {
+                fprintf(stderr, "Error: negative exponent\n");
+                yyterminate();
+            }
+
             stack->push(ipow(a, b));
             break;
         case '%':
+            if (b == 0)
+            {
+                fprintf(stderr, "Error: modulo by zero\n");
+                yyterminate();
+            }
+
             stack->push(a % b);
             break;
     }
