@@ -47,14 +47,14 @@ line:
     ;
 
 expr:
-    NUMBER       { $$ = gf_norm($1);     write_buffer("%d ", $$); }
-    | SUB NUMBER { $$ = gf_norm(-$2);    write_buffer("%d ", $$); }
-    | expr ADD expr     { $$ = gf_add($1, $3);  write_buffer("+ "); }
-    | expr SUB expr     { $$ = gf_sub($1, $3);  write_buffer("- "); }
-    | expr MUL expr     { $$ = gf_mul($1, $3);  write_buffer("* "); }
-    | expr DIV expr     { $$ = gf_div($1, $3);  write_buffer("/ "); }
-    | expr POW expr     { $$ = gf_pow($1, $3);  write_buffer("^ "); }
-    | LEFT expr RIGHT   { $$ = $2; }
+    NUMBER              { $$ = gf_norm($1);     write_buffer("%d ", $$); }
+    | SUB NUMBER        { $$ = gf_norm(-$2);    write_buffer("%d ", $$); }
+    | expr ADD expr     { $$ = gf_add($1, $3);  write_buffer("+ ");      }
+    | expr SUB expr     { $$ = gf_sub($1, $3);  write_buffer("- ");      }
+    | expr MUL expr     { $$ = gf_mul($1, $3);  write_buffer("* ");      }
+    | expr DIV expr     { $$ = gf_div($1, $3);  write_buffer("/ ");      }
+    | expr POW expr     { $$ = gf_pow($1, $3);  write_buffer("^ ");      }
+    | LEFT expr RIGHT   { $$ = $2;                                       }
     ;
 
 %%
