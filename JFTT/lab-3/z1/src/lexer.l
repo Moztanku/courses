@@ -1,8 +1,6 @@
 %{
 #include <stdio.h>
 #include "parser.tab.h"
-
-#define MOD 1234577
 %}
 
 %option noyywrap
@@ -15,22 +13,22 @@ line_extension .*[\\]\n
 [\\]\n                  ;       // ignore line continuation
 "#"{line_extension}*.*$ ;       // ignore comments
 
-[0]|[1-9][0-9]* {           // match a number
+[0]|[1-9][0-9]* {               // match a number
     yylval = atoi(yytext);
 
     return NUMBER;
 }
 
-"(" { return LEFT;    }
+"(" { return LEFT;    }         // match parentheses
 ")" { return RIGHT;   }
-"+" { return ADD;     }
+"+" { return ADD;     }         // match operators
 "-" { return SUB;     }
 "*" { return MUL;     }
 "/" { return DIV;     }
 "^" { return POW;     }
-\n  { return NEWLINE; }
+\n  { return NEWLINE; }         // match newline
 
-. {                             // catch all
+. {                             // unrecognized character
     fprintf(stderr, "Unrecognized character: %s\n", yytext);
     exit(1);
 }

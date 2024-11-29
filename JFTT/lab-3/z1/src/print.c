@@ -2,7 +2,6 @@
 
 #include "stdarg.h"
 #include "stdio.h"
-#include "string.h"
 
 #define BUFFER_SIZE 1024
 
@@ -24,7 +23,7 @@ void write_buffer(const char* str, ...)
 
     va_end(args);
 
-    if (length < 0)
+    if (length >= BUFFER_SIZE - buffer_index)
     {
         buffer_status = NOOK;
 

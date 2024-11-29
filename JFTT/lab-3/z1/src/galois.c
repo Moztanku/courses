@@ -1,5 +1,38 @@
 #include "galois.h"
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+// If the compiler is GCC or Clang, check if GF_P is a prime number
+#if defined(__GNUC__) || defined(__clang__)
+    static bool is_Prime(int n)
+    {
+        if (n <= 1)
+            return false;
+        if (n <= 3)
+            return true;
+        if (n % 2 == 0 || n % 3 == 0)
+            return false;
+
+        for (int i = 5; i * i <= n; i += 6)
+            if (n % i == 0 || n % (i + 2) == 0)
+                return false;
+        
+        return true;
+    }
+
+    static void __attribute__((constructor)) validate_GF_P()
+    {
+        if (!is_Prime(GF_P))
+        {
+            fprintf(stderr, "GF_P must be a prime number\n");
+
+            exit(1);
+        }
+    }
+#endif
+
 GF gf_add(GF a, GF b){ return (a + b) % GF_P; }
 GF gf_sub(GF a, GF b){ return (a + gf_inva(b)) % GF_P; }
 GF gf_mul(GF a, GF b){ return (a * b) % GF_P; }

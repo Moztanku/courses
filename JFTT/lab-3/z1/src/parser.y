@@ -1,16 +1,11 @@
 %{
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "galois.h"
 #include "print.h"
 
 extern int yylex();
 extern int yyparse();
 
-void yyerror(const char*){
-}
+void yyerror(const char*){}
 
 %}
 
@@ -33,20 +28,22 @@ line:
     NEWLINE
     | error NEWLINE     {
         clear_buffer();
-        printf("Błąd.\n"); 
+        write_buffer("Błąd. Nieprawidłowe wyrażenie.\n");
+        print_buffer();
+        clear_buffer();
     }
     | expr NEWLINE      {
+        write_buffer("\nWynik: %d\n", $1);
+
         if (buffer_status == NOOK)
         {
             clear_buffer();
-            printf("Błąd. Przepełnienie bufora zapisu.\n");
+            write_buffer("Błąd. Przepełnienie bufora zapisu.\n");
         }
-        else
-        {
-            print_buffer();
-            clear_buffer();
-            printf("\nWynik: %d\n", $1); }
-        }
+
+        print_buffer();
+        clear_buffer();
+    }
     ;
 
 expr:

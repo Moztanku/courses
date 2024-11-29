@@ -2,6 +2,9 @@
 
 typedef unsigned long long GF; // Galois Field element
 
+// Define the characteristic of the Galois Field
+//  can be changed to any prime number by adding '-DGF_P=<number>' to the compiler flags
+//  using '#define GF_P <number>' in the code will not work because galois.c is compiled separately
 #ifndef GF_P
 #   define GF_P 1234577 // Prime number used as the characteristic of the Galois Field
 #endif
