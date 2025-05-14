@@ -57,6 +57,7 @@ class Wheels {
 
         int pinsRight[3];
         int pinsLeft[3];
+        int speed;
 
         void updateDashboard(int = 0);
 };

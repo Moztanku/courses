@@ -1,9 +1,8 @@
 #include <Arduino.h>
 
-#include <TimerOne.h>
-
 #include <IRremote.hpp>
 
+#include "Servo.h"
 #include "Wheels.h"
 
 Wheels wheels{};
@@ -25,5 +24,18 @@ void setup() {
 }
 
 void loop() {
+  while(Serial.available()) {
+    const char input = Serial.read();
 
+    switch(input) {
+      case 'w':
+        wheels.forward(); break;
+      case 's':
+        wheels.stop(); break;
+      case 'x':
+        wheels.back(); break;
+      default:
+        break;
+    }
+  }
 }
