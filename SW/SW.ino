@@ -37,5 +37,7 @@ void loop() {
       default:
         break;
     }
+
+    wheels.updateDashboard();
   }
 }

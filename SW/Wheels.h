@@ -6,10 +6,6 @@
  * 1)  powiązanie odpowiednich pinów I/O Arduino metodą attach() 
  * 2)  ustalenie prędkości setSpeed*()
  * 3)  wywołanie funkcji ruchu
- *
- * TODO:
- *  - zabezpieczenie przed ruchem bez attach()
- *  - ustawienie domyślnej prędkości != 0
  */
 #include <Arduino.h>
 
@@ -52,14 +48,14 @@ class Wheels {
         void setSpeed(uint8_t);
         void setSpeedRight(uint8_t);
         void setSpeedLeft(uint8_t);
+
+        void updateDashboard(int = 0);
     private:
         LiquidCrystal_I2C* dashboard{nullptr};
 
         int pinsRight[3];
         int pinsLeft[3];
         int speed;
-
-        void updateDashboard(int = 0);
 };
 
 
